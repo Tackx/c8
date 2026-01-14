@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.page-template": "vue",
+    "*.layout-template": "vue",
+    "*.vue": "vue",
+    "*.sql": "sql",
+    "*.js": "javascript",
+    "*.scss": "tailwindcss",
+    "*.css": "tailwindcss",
+    "*.md": "markdown",
+    "stdio.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "enabled"
+}
