@@ -31,47 +31,20 @@ int main(void)
         // DrawText("Hello from C8!", 20, 20, 20, WHITE);
         EndDrawing();
 
-        // uint8_t zero[5] = {0xF0, 0x90, 0xF0, 0x90, 0x90};
-
-        // 11110000
-        // 00000001
-        //
-
         for (int letter_index = 0; letter_index < 16; letter_index++)
         {
             for (int y = 0; y < 5; y++)
             {
                 for (int x = 0; x < 8; x++)
                 {
-                    bool bit = font[letter_index][y] >> 8 - x & 1;
+                    bool bit = (font[letter_index][y] >> (7 - x)) & 1;
                     if (bit)
                     {
                         DrawRectangle(x + letter_index * 6, y, 1, 1, GREEN);
                     }
-                    else
-                    {
-                        // DrawRectangle(x + letter_index, y, 1, 1, BLACK);
-                    }
                 }
             }
         }
-
-        // for (int letter_index = 0; letter_index < 16; letter_index++)
-        // {
-        //     uint8_t letter_row = font[letter_index];
-
-        // }
-
-        // for (int x = 0; x < screenWidth; x++)
-        // {
-
-        //     bool bit = zero[0] >> 7 & 1;
-        //     if (bit)
-        //     {
-        //         DrawRectangle(x, 0, 10, 10, GREEN);
-        //     }
-        //     printf("SHIFTED: %d", bit);
-        // }
     }
     CloseWindow();
 
