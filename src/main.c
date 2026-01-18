@@ -31,9 +31,9 @@ int main(void)
         // DrawText("Hello from C8!", 20, 20, 20, WHITE);
         EndDrawing();
 
-        for (int letter_index = 0; letter_index < 16; letter_index++)
+        for (int letter_index = 0; letter_index < sizeof(font) / sizeof(font[0]); letter_index++)
         {
-            for (int y = 0; y < 5; y++)
+            for (int y = 0; y < sizeof(font[letter_index]); y++)
             {
                 for (int x = 0; x < 8; x++)
                 {
