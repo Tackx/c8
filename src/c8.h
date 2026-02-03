@@ -63,6 +63,7 @@ typedef struct C8
 	C8_VARIABLE_REGISTERS v_regs;
 } C8;
 
+// TODO: Change to typedef, move the implementation to the `.c` file
 uint8_t font[16][5] = {
 	{0xF0, 0x90, 0x90, 0x90, 0xF0}, // 0
 	{0x20, 0x60, 0x20, 0x20, 0x70}, // 1
