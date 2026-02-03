@@ -24,6 +24,9 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "C8");
     SetTargetFPS(60);
 
+    Image img = LoadImage("resources/wabbit_alpha.png");
+    SetWindowIcon(img);
+
     while (!WindowShouldClose())
     {
         BeginDrawing();
