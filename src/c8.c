@@ -40,9 +40,39 @@ void draw_font_sprites(void)
 	}
 }
 
-// TODO
 // Height is needed so that we know how many bytes to read from the start pointed to by sprite
-void draw_sprite(uint8_t x, uint8_t y, uint8_t *sprite, uint8_t height);
+void draw_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t height)
+{
+
+	for (int i = 0; i < height; ++i)
+	{
+		for (int j = 0; j < 8; ++j)
+		{
+			bool bit = (*(sprite + i) >> (7 - j)) & 1;
+			c8->display[y + i][x + j] ^= bit;
+		}
+	}
+}
+
+void draw_screen(C8 *c8)
+{
+	for (int y = 0; y < C8_HEIGHT_PIXELS; ++y)
+	{
+		for (int x = 0; x < C8_WIDTH_PIXELS; ++x)
+		{
+			bool bit = c8->display[y][x];
+
+			if (bit)
+			{
+				DrawRectangle(x, y, 1, 1, GREEN);
+			}
+			else
+			{
+				DrawRectangle(x, y, 1, 1, BLACK);
+			}
+		}
+	}
+}
 
 void c8_init(void)
 {
@@ -52,9 +82,9 @@ void c8_init(void)
 	c8->ram[C8_PROGRAM_START_LOCATION] = 250;
 	printf("first byte of the C8 RAM: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
 
-	for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
+	for (int i = 0; i < C8_HEIGHT_PIXELS; ++i)
 	{
-		for (int j = 0; j < C8_WIDTH_PIXELS; j++)
+		for (int j = 0; j < C8_WIDTH_PIXELS; ++j)
 		{
 			printf("%x", c8->display[i][j]);
 		}
@@ -70,12 +100,24 @@ void c8_init(void)
 	Image img = LoadImage("resources/wabbit_alpha.png");
 	SetWindowIcon(img);
 
+	draw_sprite(c8, 0, 0, font_sprites[10], 5);
+	for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
+	{
+		for (int j = 0; j < C8_WIDTH_PIXELS; j++)
+		{
+			printf("%x", c8->display[i][j]);
+		}
+		printf("\n");
+	}
+
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
 		ClearBackground(BLACK);
 		// DrawText("Hello from C8!", 20, 20, 20, WHITE);
 		EndDrawing();
+
+		draw_screen(c8);
 
 		// draw_font_sprites();
 	}
