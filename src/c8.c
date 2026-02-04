@@ -5,7 +5,74 @@
 #include "c8.h"
 #include "raylib.h"
 
-C8_FONT_SPRITE font_sprites[16] = {
+// Display
+#define C8_HEIGHT_PIXELS 32
+#define C8_WIDTH_PIXELS 64
+#define C8_RESOLUTION_MULTIPLIER 10
+
+// Memory offsets
+#define C8_FONT_START_LOCATION 0x050
+#define C8_PROGRAM_START_LOCATION 0x200
+
+typedef uint8_t C8_RAM[4096];
+
+// The framebuffer
+typedef bool C8_DISPLAY[C8_HEIGHT_PIXELS][C8_WIDTH_PIXELS];
+
+typedef uint16_t C8_PROGRAM_COUNTER;
+
+typedef uint16_t C8_I_INDEX;
+
+// TODO: What should the stack size be?
+typedef uint16_t C8_STACK[16];
+
+typedef uint8_t C8_DELAY_TIMER;
+
+typedef uint8_t C8_SOUND_TIMER;
+
+typedef uint8_t C8_VARIABLE_REGISTERS[16];
+
+typedef enum
+{
+	V0,
+	V1,
+	V2,
+	V3,
+	V4,
+	V5,
+	V6,
+	V7,
+	V8,
+	V9,
+	VA,
+	VB,
+	VC,
+	VD,
+	VE,
+	VF
+} C8_VARIABLE_REGISTER;
+
+// TODO: Stack pointer?
+typedef struct C8
+{
+	C8_RAM ram;
+	C8_DISPLAY display;
+	C8_PROGRAM_COUNTER pc;
+	C8_I_INDEX i_index;
+	C8_STACK stack;
+	C8_DELAY_TIMER delay_timer;
+	C8_SOUND_TIMER sound_timer;
+	C8_VARIABLE_REGISTERS v_regs;
+} C8;
+
+typedef uint8_t C8_FONT_SPRITE[5];
+
+typedef struct Resources
+{
+	Image icon;
+} Resources;
+
+static C8_FONT_SPRITE font_sprites[16] = {
 	{0xF0, 0x90, 0x90, 0x90, 0xF0}, // 0
 	{0x20, 0x60, 0x20, 0x20, 0x70}, // 1
 	{0xF0, 0x10, 0xF0, 0x80, 0xF0}, // 2
@@ -24,7 +91,7 @@ C8_FONT_SPRITE font_sprites[16] = {
 	{0xF0, 0x80, 0xF0, 0x80, 0x80}	// F
 };
 
-void draw_font_sprites(void)
+static void draw_font_sprites(void)
 {
 	for (int letter_index = 0; letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]); letter_index++)
 	{
@@ -54,9 +121,8 @@ void draw_font_sprites(void)
 }
 
 // Height is needed so that we know how many bytes to read from the start pointed to by sprite
-void draw_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t height)
+static void write_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t height)
 {
-
 	for (int i = 0; i < height; ++i)
 	{
 		for (int j = 0; j < 8; ++j)
@@ -68,7 +134,7 @@ void draw_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t he
 	}
 }
 
-void draw_screen(C8 *c8)
+static void draw_screen(C8 *c8)
 {
 	for (int y = 0; y < C8_HEIGHT_PIXELS; ++y)
 	{
@@ -89,6 +155,23 @@ void draw_screen(C8 *c8)
 	}
 }
 
+static Resources *initialize_resources(void)
+{
+	Resources *r = malloc(sizeof(Resources));
+	Image icon = LoadImage("resources/wabbit_alpha.png");
+	r->icon = icon;
+
+	return r;
+}
+
+static void handle_exit(C8 *c8, Resources *resources)
+{
+	CloseWindow();
+	UnloadImage(resources->icon);
+	free(resources);
+	free(c8);
+}
+
 void c8_init(void)
 {
 	C8 *c8 = malloc(sizeof(C8));
@@ -103,8 +186,8 @@ void c8_init(void)
 	InitWindow(screenWidth, screenHeight, "C8");
 	SetTargetFPS(60);
 
-	Image img = LoadImage("resources/wabbit_alpha.png");
-	SetWindowIcon(img);
+	Resources *r = initialize_resources();
+	SetWindowIcon(r->icon);
 
 	uint8_t vxn[3][5] = {
 		{0xC3, 0xC3, 0xC3, 0x66, 0x18},
@@ -114,12 +197,12 @@ void c8_init(void)
 
 	for (int i = 0; i < 3; ++i)
 	{
-		draw_sprite(c8, i * 10, 0, vxn[i], 5);
+		write_sprite(c8, i * 10, 0, vxn[i], 5);
 	}
 
 	// C8
-	// draw_sprite(c8, 0, 0, font_sprites[12], 5);
-	// draw_sprite(c8, 5, 0, font_sprites[8], 5);
+	// write_sprite(c8, 0, 0, font_sprites[12], 5);
+	// write_sprite(c8, 5, 0, font_sprites[8], 5);
 
 	BeginDrawing();
 	ClearBackground(BLACK);
@@ -133,5 +216,5 @@ void c8_init(void)
 		EndDrawing();
 	}
 
-	CloseWindow();
+	handle_exit(c8, r);
 }
