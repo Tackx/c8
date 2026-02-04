@@ -38,12 +38,12 @@ void draw_font_sprites(void)
 
 					int posX = x * C8_RESOLUTION_MULTIPLIER + letter_index * 50;
 					int overflow = floor((posX / (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)));
+
 					if (overflow > 0)
 					{
-						printf("Old posX: %d\n", posX);
 						posX -= overflow * C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
-						printf("New posX: %d\n", posX);
 					}
+
 					int posY = (y + overflow) * C8_RESOLUTION_MULTIPLIER + overflow * 50;
 
 					DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
@@ -97,15 +97,6 @@ void c8_init(void)
 	c8->ram[C8_PROGRAM_START_LOCATION] = 250;
 	printf("first byte of the C8 RAM: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
 
-	for (int i = 0; i < C8_HEIGHT_PIXELS; ++i)
-	{
-		for (int j = 0; j < C8_WIDTH_PIXELS; ++j)
-		{
-			printf("%x", c8->display[i][j]);
-		}
-		printf("\n");
-	}
-
 	const int screenWidth = C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
 	const int screenHeight = C8_HEIGHT_PIXELS * C8_RESOLUTION_MULTIPLIER;
 
@@ -115,26 +106,31 @@ void c8_init(void)
 	Image img = LoadImage("resources/wabbit_alpha.png");
 	SetWindowIcon(img);
 
-	draw_sprite(c8, 0, 0, font_sprites[14], 5);
+	uint8_t vxn[3][5] = {
+		{0xC3, 0xC3, 0xC3, 0x66, 0x18},
+		{0xC3, 0x66, 0x18, 0x66, 0xC3},
+		{0xC3, 0xE3, 0xF3, 0xDB, 0xC7},
+	};
 
-	for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
+	for (int i = 0; i < 3; ++i)
 	{
-		for (int j = 0; j < C8_WIDTH_PIXELS; j++)
-		{
-			printf("%x", c8->display[i][j]);
-		}
-		printf("\n");
+		draw_sprite(c8, i * 10, 0, vxn[i], 5);
 	}
 
+	// C8
+	// draw_sprite(c8, 0, 0, font_sprites[12], 5);
+	// draw_sprite(c8, 5, 0, font_sprites[8], 5);
+
 	BeginDrawing();
-	draw_font_sprites();
+	ClearBackground(BLACK);
 	EndDrawing();
 
 	while (!WindowShouldClose())
 	{
-		// ClearBackground(BLACK);
-		// draw_screen(c8);
+		BeginDrawing();
+		draw_screen(c8);
 		// draw_font_sprites();
+		EndDrawing();
 	}
 
 	CloseWindow();
