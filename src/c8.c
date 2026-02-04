@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+
 #include "c8.h"
 #include "raylib.h"
 
@@ -33,7 +35,18 @@ void draw_font_sprites(void)
 				bool bit = (font_sprites[letter_index][y] >> (7 - x)) & 1;
 				if (bit)
 				{
-					DrawRectangle(x + letter_index * 6, y, 1, 1, GREEN);
+
+					int posX = x * C8_RESOLUTION_MULTIPLIER + letter_index * 50;
+					int overflow = floor((posX / (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)));
+					if (overflow > 0)
+					{
+						printf("Old posX: %d\n", posX);
+						posX -= overflow * C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
+						printf("New posX: %d\n", posX);
+					}
+					int posY = (y + overflow) * C8_RESOLUTION_MULTIPLIER + overflow * 50;
+
+					DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
 				}
 			}
 		}
@@ -49,6 +62,7 @@ void draw_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t he
 		for (int j = 0; j < 8; ++j)
 		{
 			bool bit = (*(sprite + i) >> (7 - j)) & 1;
+			// TODO: Can detect collisions here
 			c8->display[y + i][x + j] ^= bit;
 		}
 	}
@@ -62,13 +76,14 @@ void draw_screen(C8 *c8)
 		{
 			bool bit = c8->display[y][x];
 
+			// Naive solution for now
 			if (bit)
 			{
-				DrawRectangle(x, y, 1, 1, GREEN);
+				DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
 			}
 			else
 			{
-				DrawRectangle(x, y, 1, 1, BLACK);
+				DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, BLACK);
 			}
 		}
 	}
@@ -100,7 +115,8 @@ void c8_init(void)
 	Image img = LoadImage("resources/wabbit_alpha.png");
 	SetWindowIcon(img);
 
-	draw_sprite(c8, 0, 0, font_sprites[10], 5);
+	draw_sprite(c8, 0, 0, font_sprites[14], 5);
+
 	for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
 	{
 		for (int j = 0; j < C8_WIDTH_PIXELS; j++)
@@ -110,15 +126,14 @@ void c8_init(void)
 		printf("\n");
 	}
 
+	BeginDrawing();
+	draw_font_sprites();
+	EndDrawing();
+
 	while (!WindowShouldClose())
 	{
-		BeginDrawing();
-		ClearBackground(BLACK);
-		// DrawText("Hello from C8!", 20, 20, 20, WHITE);
-		EndDrawing();
-
-		draw_screen(c8);
-
+		// ClearBackground(BLACK);
+		// draw_screen(c8);
 		// draw_font_sprites();
 	}
 
