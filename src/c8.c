@@ -67,11 +67,6 @@ typedef struct C8
 
 typedef uint8_t C8_FONT_SPRITE[5];
 
-typedef struct Resources
-{
-	Image icon;
-} Resources;
-
 static C8_FONT_SPRITE font_sprites[16] = {
 	{0xF0, 0x90, 0x90, 0x90, 0xF0}, // 0
 	{0x20, 0x60, 0x20, 0x20, 0x70}, // 1
@@ -155,20 +150,16 @@ static void draw_screen(C8 *c8)
 	}
 }
 
-static Resources *initialize_resources(void)
+static void initialize_resources(void)
 {
-	Resources *r = malloc(sizeof(Resources));
 	Image icon = LoadImage("resources/wabbit_alpha.png");
-	r->icon = icon;
-
-	return r;
+	SetWindowIcon(icon);
+	UnloadImage(icon);
 }
 
-static void handle_exit(C8 *c8, Resources *resources)
+static void handle_exit(C8 *c8)
 {
 	CloseWindow();
-	UnloadImage(resources->icon);
-	free(resources);
 	free(c8);
 }
 
@@ -186,8 +177,7 @@ void c8_init(void)
 	InitWindow(screenWidth, screenHeight, "C8");
 	SetTargetFPS(60);
 
-	Resources *r = initialize_resources();
-	SetWindowIcon(r->icon);
+	initialize_resources();
 
 	uint8_t vxn[3][5] = {
 		{0xC3, 0xC3, 0xC3, 0x66, 0x18},
@@ -216,5 +206,5 @@ void c8_init(void)
 		EndDrawing();
 	}
 
-	handle_exit(c8, r);
+	handle_exit(c8);
 }
