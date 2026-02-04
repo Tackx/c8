@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #include "c8.h"
 #include "raylib.h"
@@ -120,6 +122,7 @@ static void write_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, ui
 {
 	for (int i = 0; i < height; ++i)
 	{
+		// TODO: Fix magic number
 		for (int j = 0; j < 8; ++j)
 		{
 			bool bit = (*(sprite + i) >> (7 - j)) & 1;
@@ -201,8 +204,8 @@ void c8_init(void)
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-		draw_screen(c8);
-		// draw_font_sprites();
+		// draw_screen(c8);
+		draw_font_sprites();
 		EndDrawing();
 	}
 
