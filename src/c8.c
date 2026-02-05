@@ -11,6 +11,8 @@
 #define C8_HEIGHT_PIXELS 32
 #define C8_WIDTH_PIXELS 64
 #define C8_RESOLUTION_MULTIPLIER 10
+#define C8_ACTUAL_WIDTH (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)
+#define C8_ACTUAL_HEIGHT (C8_HEIGHT_PIXELS * C8_RESOLUTION_MULTIPLIER)
 
 // Memory offsets
 #define C8_FONT_START_LOCATION 0x050
@@ -141,14 +143,16 @@ static void draw_screen(C8 *c8)
 			bool bit = c8->display[y][x];
 
 			// Naive solution for now
+			Color c;
 			if (bit)
 			{
-				DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
+				c = GREEN;
 			}
 			else
 			{
-				DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, BLACK);
+				c = BLACK;
 			}
+			DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, c);
 		}
 	}
 }
@@ -160,24 +164,11 @@ static void initialize_resources(void)
 	UnloadImage(icon);
 }
 
-static void handle_exit(C8 *c8)
-{
-	CloseWindow();
-	free(c8);
-}
-
 void c8_init(void)
 {
-	C8 *c8 = malloc(sizeof(C8));
-	*c8 = (C8){0};
+	C8 c8 = {0};
 
-	c8->ram[C8_PROGRAM_START_LOCATION] = 250;
-	printf("first byte of the C8 RAM: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
-
-	const int screenWidth = C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
-	const int screenHeight = C8_HEIGHT_PIXELS * C8_RESOLUTION_MULTIPLIER;
-
-	InitWindow(screenWidth, screenHeight, "C8");
+	InitWindow(C8_ACTUAL_WIDTH, C8_ACTUAL_HEIGHT, "C8");
 	SetTargetFPS(60);
 
 	initialize_resources();
@@ -190,7 +181,7 @@ void c8_init(void)
 
 	for (int i = 0; i < 3; ++i)
 	{
-		write_sprite(c8, i * 10, 0, vxn[i], 5);
+		write_sprite(&c8, i * 10, 0, vxn[i], 5);
 	}
 
 	// C8
@@ -209,5 +200,5 @@ void c8_init(void)
 		EndDrawing();
 	}
 
-	handle_exit(c8);
+	CloseWindow();
 }
