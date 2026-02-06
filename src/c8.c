@@ -19,11 +19,11 @@
 
 // Instructions
 #define C8_INSTRUCTION_CLEAR_SCREEN 0x00
-#define C8_INSTRUCTION_JUMP 0x10
-#define C8_INSTRUCTION_VX_ADD 0x60
-#define C8_INSTRUCTION_VX_SET 0x70
-#define C8_INSTRUCTION_I_SET 0xA0
-#define C8_INSTRUCTION_DRAW 0xD0
+#define C8_INSTRUCTION_JUMP 0x01
+#define C8_INSTRUCTION_VX_ADD 0x06
+#define C8_INSTRUCTION_VX_SET 0x07
+#define C8_INSTRUCTION_I_SET 0x0A
+#define C8_INSTRUCTION_DRAW 0x0D
 
 typedef uint8_t C8_RAM[4096];
 
@@ -192,6 +192,24 @@ void decode_instruction(C8_INSTRUCTION instruction)
 
 	switch (type)
 	{
+	case C8_INSTRUCTION_CLEAR_SCREEN:
+		printf("Recognized the clear screen instruction");
+		break;
+	case C8_INSTRUCTION_JUMP:
+		printf("Recognized the jump instruction");
+		break;
+	case C8_INSTRUCTION_VX_ADD:
+		printf("Recognized the VX ADD instruction");
+		break;
+	case C8_INSTRUCTION_VX_SET:
+		printf("Recognized the VX SET instruction");
+		break;
+	case C8_INSTRUCTION_I_SET:
+		printf("Recognized the I SET instruction");
+		break;
+	case C8_INSTRUCTION_DRAW:
+		printf("Recognized the DRAW instruction");
+		break;
 	default:
 		break;
 	}
@@ -220,8 +238,8 @@ void c8_init(void)
 	}
 
 	// C8
-	// write_sprite(c8, 0, 0, font_sprites[12], 5);
-	// write_sprite(c8, 5, 0, font_sprites[8], 5);
+	// write_sprite(&c8, 0, 0, font_sprites[12], 5);
+	// write_sprite(&c8, 5, 0, font_sprites[8], 5);
 
 	BeginDrawing();
 	ClearBackground(BLACK);
@@ -231,15 +249,18 @@ void c8_init(void)
 	// printf("Instruction: %d\n", fetch_instruction(&c8));
 	// printf("PC: %d\n", c8.pc);
 
-	c8.ram[0] = 0x00;
+	c8.ram[0] = 0x10;
 	c8.ram[1] = 0xE0;
+	// 00010000
+	// 11100000
+	// 00010000 11100000
 	decode_instruction(fetch_instruction(&c8));
 
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-		// draw_screen(c8);
-		draw_font_sprites();
+		draw_screen(&c8);
+		// draw_font_sprites();
 		EndDrawing();
 	}
 
