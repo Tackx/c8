@@ -17,6 +17,14 @@
 #define C8_FONT_START_LOCATION 0x050
 #define C8_PROGRAM_START_LOCATION 0x200
 
+// Instructions
+#define C8_INSTRUCTION_CLEAR_SCREEN 0x00
+#define C8_INSTRUCTION_JUMP 0x10
+#define C8_INSTRUCTION_VX_ADD 0x60
+#define C8_INSTRUCTION_VX_SET 0x70
+#define C8_INSTRUCTION_I_SET 0xA0
+#define C8_INSTRUCTION_DRAW 0xD0
+
 typedef uint8_t C8_RAM[4096];
 
 // The framebuffer
@@ -176,23 +184,29 @@ static C8_INSTRUCTION fetch_instruction(C8 *c8)
 	return instruction;
 }
 
-static void initialize_resources(void)
+// TODO
+void decode_instruction(C8_INSTRUCTION instruction)
 {
-	Image icon = LoadImage("resources/wabbit_alpha.png");
-	SetWindowIcon(icon);
-	UnloadImage(icon);
+	uint8_t type = (instruction >> 12) & 0xFF;
+	printf("Decoded instruction type: %d\n", type);
+
+	switch (type)
+	{
+	default:
+		break;
+	}
 }
 
 void c8_init(void)
 {
 	C8 c8 = {0};
-	c8.ram[0] = 1;
-	c8.ram[1] = 2;
 
 	InitWindow(C8_ACTUAL_WIDTH, C8_ACTUAL_HEIGHT, "C8");
 	SetTargetFPS(60);
 
-	initialize_resources();
+	Image icon = LoadImage("resources/wabbit_alpha.png");
+	SetWindowIcon(icon);
+	UnloadImage(icon);
 
 	uint8_t vxn[3][5] = {
 		{0xC3, 0xC3, 0xC3, 0x66, 0x18},
@@ -213,7 +227,13 @@ void c8_init(void)
 	ClearBackground(BLACK);
 	EndDrawing();
 
-	printf("Instruction: %d", fetch_instruction(&c8));
+	// printf("PC: %d\n", c8.pc);
+	// printf("Instruction: %d\n", fetch_instruction(&c8));
+	// printf("PC: %d\n", c8.pc);
+
+	c8.ram[0] = 0x00;
+	c8.ram[1] = 0xE0;
+	decode_instruction(fetch_instruction(&c8));
 
 	while (!WindowShouldClose())
 	{
