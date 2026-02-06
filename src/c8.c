@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "c8.h"
 #include "raylib.h"
 
 // Display
@@ -24,6 +23,7 @@ typedef uint8_t C8_RAM[4096];
 typedef bool C8_DISPLAY[C8_HEIGHT_PIXELS][C8_WIDTH_PIXELS];
 
 typedef uint16_t C8_PROGRAM_COUNTER;
+typedef uint16_t C8_INSTRUCTION;
 
 typedef uint16_t C8_I_INDEX;
 
@@ -157,6 +157,25 @@ static void draw_screen(C8 *c8)
 	}
 }
 
+static C8_INSTRUCTION fetch_instruction(C8 *c8)
+{
+	C8_PROGRAM_COUNTER counter_value = c8->pc;
+	uint8_t first_byte = c8->ram[counter_value];
+	uint8_t second_byte = c8->ram[counter_value + 1];
+
+	// Example:
+	// 00000001
+	// 00000010
+	// 00000001 00000010
+
+	C8_INSTRUCTION instruction = (first_byte << 8) | second_byte;
+
+	// Increment the Program Counter to be ready to fetch the next instruction
+	c8->pc += 2;
+
+	return instruction;
+}
+
 static void initialize_resources(void)
 {
 	Image icon = LoadImage("resources/wabbit_alpha.png");
@@ -167,6 +186,8 @@ static void initialize_resources(void)
 void c8_init(void)
 {
 	C8 c8 = {0};
+	c8.ram[0] = 1;
+	c8.ram[1] = 2;
 
 	InitWindow(C8_ACTUAL_WIDTH, C8_ACTUAL_HEIGHT, "C8");
 	SetTargetFPS(60);
@@ -191,6 +212,8 @@ void c8_init(void)
 	BeginDrawing();
 	ClearBackground(BLACK);
 	EndDrawing();
+
+	printf("Instruction: %d", fetch_instruction(&c8));
 
 	while (!WindowShouldClose())
 	{
