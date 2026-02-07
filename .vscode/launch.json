@@ -23,7 +23,8 @@
       ],
       "windows": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}.exe",
-        "miDebuggerPath": "gdb.exe"
+        "miDebuggerPath": "gdb.exe",
+        "args": ["${workspaceFolder}/bin/Debug/test.txt"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",

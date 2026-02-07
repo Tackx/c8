@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -98,6 +99,8 @@ static C8_FONT_SPRITE font_sprites[16] = {
 	{0xF0, 0x80, 0xF0, 0x80, 0x80}	// F
 };
 
+// Just a test/PoC drawing function
+// TODO: Remove later
 static void draw_font_sprites(void)
 {
 	for (int letter_index = 0; letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]); letter_index++)
@@ -123,6 +126,38 @@ static void draw_font_sprites(void)
 					DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
 				}
 			}
+		}
+	}
+}
+
+static void load_data(C8 *c8, char *path)
+{
+	// TODO: Confirm the max byte length of a C8 program
+	char buffer[3000];
+	FILE *file = fopen(path, "rb");
+
+	if (file == NULL)
+	{
+		printf("Could not read file with path %s\n", path);
+		return;
+	}
+
+	size_t bytes_read = fread(buffer, sizeof(unsigned char), 3000, file);
+	fclose(file);
+
+	if (bytes_read > 0)
+	{
+
+		for (int i = 0; i < bytes_read; ++i)
+		{
+			c8->ram[C8_PROGRAM_START_LOCATION + i] = buffer[i];
+		}
+		printf("Read: %s\n", buffer);
+
+		// Test printout of the values stored in RAM
+		for (int i = 0; i < 10; ++i)
+		{
+			printf("%c\n", c8->ram[C8_PROGRAM_START_LOCATION + i]);
 		}
 	}
 }
@@ -185,7 +220,7 @@ static C8_INSTRUCTION fetch_instruction(C8 *c8)
 }
 
 // TODO
-void decode_instruction(C8_INSTRUCTION instruction)
+static void decode_instruction(C8_INSTRUCTION instruction)
 {
 	uint8_t type = (instruction >> 12) & 0xFF;
 	printf("Decoded instruction type: %d\n", type);
@@ -193,29 +228,29 @@ void decode_instruction(C8_INSTRUCTION instruction)
 	switch (type)
 	{
 	case C8_INSTRUCTION_CLEAR_SCREEN:
-		printf("Recognized the clear screen instruction");
+		printf("Recognized the clear screen instruction\n");
 		break;
 	case C8_INSTRUCTION_JUMP:
-		printf("Recognized the jump instruction");
+		printf("Recognized the jump instruction\n");
 		break;
 	case C8_INSTRUCTION_VX_ADD:
-		printf("Recognized the VX ADD instruction");
+		printf("Recognized the VX ADD instruction\n");
 		break;
 	case C8_INSTRUCTION_VX_SET:
-		printf("Recognized the VX SET instruction");
+		printf("Recognized the VX SET instruction\n");
 		break;
 	case C8_INSTRUCTION_I_SET:
-		printf("Recognized the I SET instruction");
+		printf("Recognized the I SET instruction\n");
 		break;
 	case C8_INSTRUCTION_DRAW:
-		printf("Recognized the DRAW instruction");
+		printf("Recognized the DRAW instruction\n");
 		break;
 	default:
 		break;
 	}
 }
 
-void c8_init(void)
+void c8_init(int argc, char *argv[])
 {
 	C8 c8 = {0};
 
@@ -255,6 +290,14 @@ void c8_init(void)
 	// 11100000
 	// 00010000 11100000
 	decode_instruction(fetch_instruction(&c8));
+	// load_data(&c8);
+
+	if (argc >= 2)
+	{
+		load_data(&c8, (char *)*(argv + 1));
+	}
+
+	printf("Argc: %d, Argv: %s\n", argc, *(argv + 1));
 
 	while (!WindowShouldClose())
 	{
