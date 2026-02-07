@@ -250,9 +250,14 @@ static void decode_instruction(C8_INSTRUCTION instruction)
 	}
 }
 
+// TODO
+static void execute_instruction()
+{
+}
+
 void c8_init(int argc, char *argv[])
 {
-	C8 c8 = {0};
+	C8 c8 = {.pc = C8_PROGRAM_START_LOCATION};
 
 	InitWindow(C8_ACTUAL_WIDTH, C8_ACTUAL_HEIGHT, "C8");
 	SetTargetFPS(60);
@@ -272,17 +277,9 @@ void c8_init(int argc, char *argv[])
 		write_sprite(&c8, i * 10, 0, vxn[i], 5);
 	}
 
-	// C8
-	// write_sprite(&c8, 0, 0, font_sprites[12], 5);
-	// write_sprite(&c8, 5, 0, font_sprites[8], 5);
-
 	BeginDrawing();
 	ClearBackground(BLACK);
 	EndDrawing();
-
-	// printf("PC: %d\n", c8.pc);
-	// printf("Instruction: %d\n", fetch_instruction(&c8));
-	// printf("PC: %d\n", c8.pc);
 
 	c8.ram[0] = 0x10;
 	c8.ram[1] = 0xE0;
@@ -290,11 +287,15 @@ void c8_init(int argc, char *argv[])
 	// 11100000
 	// 00010000 11100000
 	decode_instruction(fetch_instruction(&c8));
-	// load_data(&c8);
 
 	if (argc >= 2)
 	{
 		load_data(&c8, (char *)*(argv + 1));
+	}
+	else
+	{
+		printf("No input file specified");
+		return;
 	}
 
 	printf("Argc: %d, Argv: %s\n", argc, *(argv + 1));
@@ -302,6 +303,7 @@ void c8_init(int argc, char *argv[])
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
+		// TODO: The fetch, decode, execute loop should probably be here
 		draw_screen(&c8);
 		// draw_font_sprites();
 		EndDrawing();
