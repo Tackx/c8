@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -219,13 +218,35 @@ static C8_INSTRUCTION fetch_instruction(C8 *c8)
 	return instruction;
 }
 
-// TODO
-static void decode_instruction(C8_INSTRUCTION instruction)
+typedef struct C8_INSTRUCTION_PARAMETERS
 {
-	uint8_t type = (instruction >> 12) & 0xFF;
-	printf("Decoded instruction type: %d\n", type);
+} C8_INSTRUCTION_PARAMETERS;
 
-	switch (type)
+typedef struct C8_INSTRUCTION_DATA
+{
+	uint8_t type;
+	C8_INSTRUCTION_PARAMETERS params;
+} C8_INSTRUCTION_DATA;
+
+// TODO
+static C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
+{
+	uint8_t decoded = (instruction >> 12) & 0xFF;
+	printf("Decoded instruction type: %d\n", decoded);
+
+	// TODO: Decode and insert params
+	C8_INSTRUCTION_DATA d = {
+		.type = decoded,
+	};
+	return d;
+}
+
+// TODO
+static void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
+{
+	printf("Executing instruction\n");
+
+	switch (data.type)
 	{
 	case C8_INSTRUCTION_CLEAR_SCREEN:
 		printf("Recognized the clear screen instruction\n");
@@ -248,11 +269,6 @@ static void decode_instruction(C8_INSTRUCTION instruction)
 	default:
 		break;
 	}
-}
-
-// TODO
-static void execute_instruction()
-{
 }
 
 void c8_init(int argc, char *argv[])
@@ -286,7 +302,7 @@ void c8_init(int argc, char *argv[])
 	// 00010000
 	// 11100000
 	// 00010000 11100000
-	decode_instruction(fetch_instruction(&c8));
+	execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
 
 	if (argc >= 2)
 	{
@@ -297,8 +313,6 @@ void c8_init(int argc, char *argv[])
 		printf("No input file specified");
 		return;
 	}
-
-	printf("Argc: %d, Argv: %s\n", argc, *(argv + 1));
 
 	while (!WindowShouldClose())
 	{
