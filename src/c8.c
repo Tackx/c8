@@ -318,7 +318,7 @@ void c8_init(int argc, char *argv[])
 
     if (argc >= 2)
     {
-        load_data(&c8, (char *)*(argv + 1));
+        load_data(&c8, argv[1]);
     }
     else
     {
