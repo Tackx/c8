@@ -2,9 +2,9 @@
 
 #include "c8.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    c8_init();
+    c8_init(argc, argv);
 
     return 0;
 }
