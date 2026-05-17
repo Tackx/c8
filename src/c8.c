@@ -29,7 +29,6 @@ typedef uint8_t C8_RAM[4096];
 
 // The framebuffer
 typedef bool C8_DISPLAY[C8_HEIGHT_PIXELS][C8_WIDTH_PIXELS];
-
 typedef uint16_t C8_PROGRAM_COUNTER;
 typedef uint16_t C8_INSTRUCTION;
 
@@ -37,11 +36,8 @@ typedef uint16_t C8_I_INDEX;
 
 // TODO: What should the stack size be?
 typedef uint16_t C8_STACK[16];
-
 typedef uint8_t C8_DELAY_TIMER;
-
 typedef uint8_t C8_SOUND_TIMER;
-
 typedef uint8_t C8_VARIABLE_REGISTERS[16];
 
 typedef enum
@@ -102,9 +98,7 @@ static C8_FONT_SPRITE font_sprites[16] = {
 // TODO: Remove later
 static void draw_font_sprites(void)
 {
-    for (int letter_index = 0;
-         letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]);
-         letter_index++)
+    for (int letter_index = 0; letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]); letter_index++)
     {
         for (int y = 0; y < sizeof(font_sprites[letter_index]); y++)
         {
@@ -115,20 +109,16 @@ static void draw_font_sprites(void)
                 {
 
                     int posX = x * C8_RESOLUTION_MULTIPLIER + letter_index * 50;
-                    int overflow = floor(
-                        (posX / (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)));
+                    int overflow = floor((posX / (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)));
 
                     if (overflow > 0)
                     {
-                        posX -= overflow * C8_WIDTH_PIXELS *
-                                C8_RESOLUTION_MULTIPLIER;
+                        posX -= overflow * C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
                     }
 
-                    int posY = (y + overflow) * C8_RESOLUTION_MULTIPLIER +
-                               overflow * 50;
+                    int posY = (y + overflow) * C8_RESOLUTION_MULTIPLIER + overflow * 50;
 
-                    DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER,
-                                  1 * C8_RESOLUTION_MULTIPLIER, GREEN);
+                    DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
                 }
             }
         }
@@ -139,11 +129,14 @@ static void load_data(C8 *c8, char *path)
 {
     // TODO: Confirm the max byte length of a C8 program
     char buffer[3000];
-    FILE *file = fopen(path, "rb");
 
-    if (file == NULL)
+    FILE *file;
+    errno_t err = fopen_s(&file, path, "rb");
+
+    if (err != 0)
     {
-        printf("Could not read file with path %s\n", path);
+        printf("Could not read file with path %s. Error number: %d\n", path, err);
+
         return;
     }
 
@@ -169,8 +162,7 @@ static void load_data(C8 *c8, char *path)
 
 // Height is needed so that we know how many bytes to read from the start
 // pointed to by sprite
-static void write_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite,
-                         uint8_t height)
+static void write_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t height)
 {
     for (int i = 0; i < height; ++i)
     {
@@ -202,9 +194,8 @@ static void draw_screen(C8 *c8)
             {
                 c = BLACK;
             }
-            DrawRectangle(
-                x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER,
-                1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, c);
+
+            DrawRectangle(x * C8_RESOLUTION_MULTIPLIER, y * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, c);
         }
     }
 }
@@ -283,7 +274,7 @@ static void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
     }
 }
 
-void c8_init(int argc, char *argv[])
+C8 init()
 {
     C8 c8 = {.pc = C8_PROGRAM_START_LOCATION};
 
@@ -293,6 +284,13 @@ void c8_init(int argc, char *argv[])
     Image icon = LoadImage("resources/wabbit_alpha.png");
     SetWindowIcon(icon);
     UnloadImage(icon);
+
+    return c8;
+}
+
+void c8_run(int argc, char *argv[])
+{
+    C8 c8 = init();
 
     uint8_t vxn[3][5] = {
         {0xC3, 0xC3, 0xC3, 0x66, 0x18},

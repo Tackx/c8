@@ -3,3 +3,4 @@ IndentWidth: 4
 BreakBeforeBraces: Allman
 SpaceBeforeParens: ControlStatements
 PointerAlignment: Right
+ColumnLimit: 160
