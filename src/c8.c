@@ -85,18 +85,6 @@ static C8_FONT_SPRITE font_sprites[16] = {
     {0xF0, 0x80, 0xF0, 0x80, 0x80}  // F
 };
 
-// Draw PoC - TODO: Test using it
-static void draw(C8 *c8)
-{
-    for (int i = 0; i < sizeof(c8->display) / sizeof(c8->display[0]); ++i)
-    {
-        for (int j; i < sizeof(c8->display[0]) / sizeof(c8->display[0][0]); ++j)
-        {
-            DrawRectangle(i, j, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
-        }
-    }
-};
-
 static void clear_screen(C8 *c8)
 {
     printf("Executing clear_screen\n");
@@ -114,39 +102,10 @@ static void clear_screen(C8 *c8)
     printf("Executed clear_screen\n");
 }
 
-// TODO: Add set func
-
-// Just a test/PoC drawing function
-// TODO: Remove later
-// TODO: This should be split into a set and a draw function.
-// The set function sets the display matrix values and draw calls DrawRectangle..
-static void draw_font_sprites(void)
+static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
 {
-    for (int letter_index = 0; letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]); letter_index++)
-    {
-        for (int y = 0; y < sizeof(font_sprites[letter_index]); y++)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                bool bit = (font_sprites[letter_index][y] >> (7 - x)) & 1;
-                if (bit)
-                {
-
-                    int posX = x * C8_RESOLUTION_MULTIPLIER + letter_index * 50;
-                    int overflow = floor((posX / (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)));
-
-                    if (overflow > 0)
-                    {
-                        posX -= overflow * C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER;
-                    }
-
-                    int posY = (y + overflow) * C8_RESOLUTION_MULTIPLIER + overflow * 50;
-
-                    DrawRectangle(posX, posY, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
-                }
-            }
-        }
-    }
+    c8->pc = pc;
+    printf("Jumped to memory address %d\n", pc);
 }
 
 static void load_data(C8 *c8, char *path)
@@ -167,7 +126,7 @@ static void load_data(C8 *c8, char *path)
     if (bytes_read > 0)
     {
 
-        printf("Read: %s\n", &c8->ram[C8_PROGRAM_START_LOCATION]);
+        printf("Read: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
     }
 }
 
@@ -233,6 +192,7 @@ static C8_INSTRUCTION fetch_instruction(C8 *c8)
 // TODO
 typedef struct C8_INSTRUCTION_PARAMETERS
 {
+    C8_PROGRAM_COUNTER pc;
 } C8_INSTRUCTION_PARAMETERS;
 
 typedef struct C8_INSTRUCTION_DATA
@@ -244,6 +204,7 @@ typedef struct C8_INSTRUCTION_DATA
 // TODO
 static C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 {
+    // 00000000
     uint8_t decoded = (instruction >> 12) & 0xFF;
     printf("Decoded instruction type: %d\n", decoded);
 
@@ -251,6 +212,13 @@ static C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
     C8_INSTRUCTION_DATA d = {
         .type = decoded,
     };
+
+    if (decoded == C8_INSTRUCTION_JUMP)
+    {
+        C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
+
+        d.params.pc = pc;
+    }
 
     return d;
 }
@@ -270,6 +238,9 @@ static void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
     case C8_INSTRUCTION_JUMP:
         printf("Recognized the jump instruction\n");
+
+        jump(c8, data.params.pc);
+
         break;
     case C8_INSTRUCTION_VX_ADD:
         printf("Recognized the VX ADD instruction\n");
@@ -321,8 +292,8 @@ void c8_run(int argc, char *argv[])
     ClearBackground(BLACK);
     EndDrawing();
 
-    c8.ram[0] = 0x10;
-    c8.ram[1] = 0xE0;
+    // c8.ram[0] = 0x10;
+    // c8.ram[1] = 0xE0;
     // 00010000
     // 11100000
     // 00010000 11100000
