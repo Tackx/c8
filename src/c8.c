@@ -3,38 +3,29 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+typedef uint16_t DWORD;
+void Sleep(DWORD dwMilliseconds);
+#else
+#include <unistd.h>
+#endif
 
 #include "raylib.h"
 
-// Display
-#define C8_HEIGHT_PIXELS 32
-#define C8_WIDTH_PIXELS 64
-#define C8_RESOLUTION_MULTIPLIER 10
-#define C8_ACTUAL_WIDTH (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)
-#define C8_ACTUAL_HEIGHT (C8_HEIGHT_PIXELS * C8_RESOLUTION_MULTIPLIER)
+#include "consts/consts.h"
 
-// Memory offsets
-#define C8_FONT_START_LOCATION 0x050
-#define C8_PROGRAM_START_LOCATION 0x200
-
-// Instructions
-#define C8_INSTRUCTION_CLEAR_SCREEN 0x00
-#define C8_INSTRUCTION_JUMP 0x01
-#define C8_INSTRUCTION_VX_ADD 0x06
-#define C8_INSTRUCTION_VX_SET 0x07
-#define C8_INSTRUCTION_I_SET 0x0A
-#define C8_INSTRUCTION_DRAW 0x0D
-
-typedef uint8_t C8_RAM[4096];
+typedef uint8_t C8_RAM[C8_RAM_SIZE];
 
 // The framebuffer
 typedef bool C8_DISPLAY[C8_HEIGHT_PIXELS][C8_WIDTH_PIXELS];
 typedef uint16_t C8_PROGRAM_COUNTER;
 typedef uint16_t C8_INSTRUCTION;
 
+// Index register which points at locations in memory
 typedef uint16_t C8_I_INDEX;
 
-// TODO: What should the stack size be?
 typedef uint16_t C8_STACK[16];
 typedef uint8_t C8_DELAY_TIMER;
 typedef uint8_t C8_SOUND_TIMER;
@@ -94,8 +85,41 @@ static C8_FONT_SPRITE font_sprites[16] = {
     {0xF0, 0x80, 0xF0, 0x80, 0x80}  // F
 };
 
+// Draw PoC - TODO: Test using it
+static void draw(C8 *c8)
+{
+    for (int i = 0; i < sizeof(c8->display) / sizeof(c8->display[0]); ++i)
+    {
+        for (int j; i < sizeof(c8->display[0]) / sizeof(c8->display[0][0]); ++j)
+        {
+            DrawRectangle(i, j, 1 * C8_RESOLUTION_MULTIPLIER, 1 * C8_RESOLUTION_MULTIPLIER, GREEN);
+        }
+    }
+};
+
+static void clear_screen(C8 *c8)
+{
+    printf("Executing clear_screen\n");
+
+    for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
+    {
+        // for (int j = 0; j < C8_WIDTH_PIXELS; j++)
+        // {
+        //     c8->display[i][j] = 0;
+        // }
+
+        memset(c8->display[i], 0, sizeof c8->display[0]);
+    }
+
+    printf("Executed clear_screen\n");
+}
+
+// TODO: Add set func
+
 // Just a test/PoC drawing function
 // TODO: Remove later
+// TODO: This should be split into a set and a draw function.
+// The set function sets the display matrix values and draw calls DrawRectangle..
 static void draw_font_sprites(void)
 {
     for (int letter_index = 0; letter_index < sizeof(font_sprites) / sizeof(font_sprites[0]); letter_index++)
@@ -127,9 +151,6 @@ static void draw_font_sprites(void)
 
 static void load_data(C8 *c8, char *path)
 {
-    // TODO: Confirm the max byte length of a C8 program
-    char buffer[3000];
-
     FILE *file;
     errno_t err = fopen_s(&file, path, "rb");
 
@@ -140,23 +161,13 @@ static void load_data(C8 *c8, char *path)
         return;
     }
 
-    size_t bytes_read = fread(buffer, sizeof(unsigned char), 3000, file);
+    size_t bytes_read = fread(&c8->ram[C8_PROGRAM_START_LOCATION], sizeof(unsigned char), 3000, file);
     fclose(file);
 
     if (bytes_read > 0)
     {
 
-        for (int i = 0; i < bytes_read; ++i)
-        {
-            c8->ram[C8_PROGRAM_START_LOCATION + i] = buffer[i];
-        }
-        printf("Read: %s\n", buffer);
-
-        // Test printout of the values stored in RAM
-        for (int i = 0; i < 10; ++i)
-        {
-            printf("%c\n", c8->ram[C8_PROGRAM_START_LOCATION + i]);
-        }
+        printf("Read: %s\n", &c8->ram[C8_PROGRAM_START_LOCATION]);
     }
 }
 
@@ -253,6 +264,9 @@ static void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
     {
     case C8_INSTRUCTION_CLEAR_SCREEN:
         printf("Recognized the clear screen instruction\n");
+
+        clear_screen(c8);
+
         break;
     case C8_INSTRUCTION_JUMP:
         printf("Recognized the jump instruction\n");
@@ -312,7 +326,6 @@ void c8_run(int argc, char *argv[])
     // 00010000
     // 11100000
     // 00010000 11100000
-    execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
 
     if (argc >= 2)
     {
@@ -326,11 +339,13 @@ void c8_run(int argc, char *argv[])
 
     while (!WindowShouldClose())
     {
+        execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
+
         BeginDrawing();
-        // TODO: The fetch, decode, execute loop should probably be here
         draw_screen(&c8);
-        // draw_font_sprites();
         EndDrawing();
+
+        Sleep(1000);
     }
 
     CloseWindow();
