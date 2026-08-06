@@ -12,9 +12,12 @@ void Sleep(DWORD dwMilliseconds);
 #include <unistd.h>
 #endif
 
+#define C8_DEBUG
+
 #include "raylib.h"
 
 #include "consts/consts.h"
+#include "logger/logger.h"
 
 typedef uint8_t C8_RAM[C8_RAM_SIZE];
 
@@ -105,7 +108,7 @@ static void clear_screen(C8 *c8)
 static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
 {
     c8->pc = pc;
-    printf("Jumped to memory address %d\n", pc);
+    C8_LOG("Jumped to memory address %d\n", pc);
 }
 
 static void load_data(C8 *c8, char *path)
@@ -126,7 +129,7 @@ static void load_data(C8 *c8, char *path)
     if (bytes_read > 0)
     {
 
-        printf("Read: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
+        C8_LOG("Read: %d\n", c8->ram[C8_PROGRAM_START_LOCATION]);
     }
 }
 
@@ -226,33 +229,33 @@ static C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 // TODO
 static void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
 {
-    printf("Executing instruction\n");
+    C8_LOG("Executing instruction\n");
 
     switch (data.type)
     {
     case C8_INSTRUCTION_CLEAR_SCREEN:
-        printf("Recognized the clear screen instruction\n");
+        C8_LOG("Recognized the clear screen instruction\n");
 
         clear_screen(c8);
 
         break;
     case C8_INSTRUCTION_JUMP:
-        printf("Recognized the jump instruction\n");
+        C8_LOG("Recognized the jump instruction\n");
 
         jump(c8, data.params.pc);
 
         break;
     case C8_INSTRUCTION_VX_ADD:
-        printf("Recognized the VX ADD instruction\n");
+        C8_LOG("Recognized the VX ADD instruction\n");
         break;
     case C8_INSTRUCTION_VX_SET:
-        printf("Recognized the VX SET instruction\n");
+        C8_LOG("Recognized the VX SET instruction\n");
         break;
     case C8_INSTRUCTION_I_SET:
-        printf("Recognized the I SET instruction\n");
+        C8_LOG("Recognized the I SET instruction\n");
         break;
     case C8_INSTRUCTION_DRAW:
-        printf("Recognized the DRAW instruction\n");
+        C8_LOG("Recognized the DRAW instruction\n");
         break;
     default:
         break;
@@ -292,12 +295,6 @@ void c8_run(int argc, char *argv[])
     ClearBackground(BLACK);
     EndDrawing();
 
-    // c8.ram[0] = 0x10;
-    // c8.ram[1] = 0xE0;
-    // 00010000
-    // 11100000
-    // 00010000 11100000
-
     if (argc >= 2)
     {
         load_data(&c8, argv[1]);
@@ -310,11 +307,19 @@ void c8_run(int argc, char *argv[])
 
     while (!WindowShouldClose())
     {
-        execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
+        // Raylib runs at target 60 fps, so each run of this loop
+        // we should process around 12 instructions to achieve ~700 instructions per second.
+        for (int i = 0; i < 12; i++)
+        {
+
+            execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
+        }
 
         BeginDrawing();
         draw_screen(&c8);
         EndDrawing();
+
+        C8_LOG("Finished Raylib frame");
 
         Sleep(1000);
     }

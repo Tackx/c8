@@ -1,3 +1,5 @@
+#pragma once
+
 // Display
 #define C8_HEIGHT_PIXELS 32
 #define C8_WIDTH_PIXELS 64
