@@ -142,7 +142,7 @@ workspace (workspaceName)
     defaultplatform ("x64")
 
     filter "configurations:Debug"
-        defines { "DEBUG" }
+        defines { "DEBUG", "C8_DEBUG" }
         symbols "On"
 
     filter "configurations:Release"

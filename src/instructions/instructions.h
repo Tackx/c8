@@ -1,0 +1,22 @@
+#pragma once
+
+#include "c8.h"
+
+typedef uint16_t C8_INSTRUCTION;
+
+typedef struct C8_INSTRUCTION_PARAMETERS
+{
+    C8_PROGRAM_COUNTER pc;
+} C8_INSTRUCTION_PARAMETERS;
+
+typedef struct C8_INSTRUCTION_DATA
+{
+    uint8_t type;
+    C8_INSTRUCTION_PARAMETERS params;
+} C8_INSTRUCTION_DATA;
+
+C8_INSTRUCTION fetch_instruction(C8 *c8);
+
+C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction);
+
+void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data);

@@ -4,7 +4,5 @@
 
 int main(int argc, char *argv[])
 {
-    c8_run(argc, argv);
-
-    return 0;
+    return c8_run(argc, argv);
 }

@@ -9,7 +9,6 @@ typedef uint8_t C8_RAM[C8_RAM_SIZE];
 // The framebuffer
 typedef bool C8_DISPLAY[C8_HEIGHT_PIXELS][C8_WIDTH_PIXELS];
 typedef uint16_t C8_PROGRAM_COUNTER;
-typedef uint16_t C8_INSTRUCTION;
 
 // Index register which points at locations in memory
 typedef uint16_t C8_I_INDEX;
@@ -55,4 +54,4 @@ typedef struct C8
     C8_VARIABLE_REGISTERS v_regs;
 } C8;
 
-void c8_run(int argc, char *argv[]);
+int c8_run(int argc, char *argv[]);
