@@ -81,6 +81,10 @@ int c8_run(int argc, char *argv[])
 {
     C8 c8 = init();
 
+    //
+    // Debugging stuff, delete later
+    //
+    c8.i_index = C8_PROGRAM_START_LOCATION + 0x300;
     uint8_t vxn[3][5] = {
         {0xC3, 0xC3, 0xC3, 0x66, 0x18},
         {0xC3, 0x66, 0x18, 0x66, 0xC3},
@@ -89,8 +93,21 @@ int c8_run(int argc, char *argv[])
 
     for (int i = 0; i < 3; ++i)
     {
-        write_sprite(&c8, i * 10, 0, vxn[i], 5);
+        for (int j = 0; j < 5; j++)
+        {
+
+            c8.ram[(C8_PROGRAM_START_LOCATION + 0x300) * (i + 1) + j] = vxn[i][j];
+        }
     }
+
+    //
+    // End of debugging stuff
+    //
+
+    // for (int i = 0; i < 3; ++i)
+    // {
+    //     write_sprite(&c8, i * 10, 0, vxn[i], 5);
+    // }
 
     // BeginDrawing();
     // ClearBackground(BLACK);
@@ -127,7 +144,7 @@ int c8_run(int argc, char *argv[])
 
         C8_LOG("Finished Raylib frame\n");
 
-        WaitTime(1);
+        WaitTime(10);
     }
 
     CloseWindow();

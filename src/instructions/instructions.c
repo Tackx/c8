@@ -43,6 +43,25 @@ static void set_i(C8 *c8, uint16_t value)
     C8_LOG("Set Index register to value %d", value);
 };
 
+static void draw(C8 *c8, uint8_t x, uint8_t y, uint8_t height)
+{
+
+    C8_LOG("Executing draw\nX: %d\nY:%d\nHeight:%d\n", x, y, height);
+
+    uint8_t *sprite = &c8->ram[c8->i_index];
+
+    for (int i = 0; i < height; ++i)
+    {
+        // TODO: Fix magic number
+        for (int j = 0; j < 8; ++j)
+        {
+            bool bit = (*(sprite + i) >> (7 - j)) & 1;
+            // TODO: Can detect collisions here
+            c8->display[y + i][x + j] ^= bit;
+        }
+    }
+}
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -113,6 +132,19 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    case C8_INSTRUCTION_DRAW:
+    {
+        uint8_t x = instruction >> 8 & 0xF;
+        uint8_t y = instruction >> 4 & 0xF;
+        uint8_t height = instruction & 0xF;
+
+        d.params.draw_x = x;
+        d.params.draw_y = y;
+        d.params.draw_height = height;
+
+        break;
+    }
+
     default:
         break;
     }
@@ -158,6 +190,9 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
     case C8_INSTRUCTION_DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
+
+        draw(c8, data.params.draw_x, data.params.draw_y, data.params.draw_height);
+
         break;
     default:
         break;
