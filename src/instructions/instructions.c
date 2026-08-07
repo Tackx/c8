@@ -19,6 +19,7 @@ static void clear_screen(C8 *c8)
 static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
 {
     c8->pc = pc;
+
     C8_LOG("Jumped to memory address %d\n", pc);
 }
 
@@ -40,7 +41,7 @@ static void set_i(C8 *c8, uint16_t value)
 {
     c8->i_index = value;
 
-    C8_LOG("Set Index register to value %d", value);
+    C8_LOG("Set Index register to value %d\n", value);
 };
 
 static void draw(C8 *c8, uint8_t x, uint8_t y, uint8_t height)

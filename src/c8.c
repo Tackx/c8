@@ -84,21 +84,20 @@ int c8_run(int argc, char *argv[])
     //
     // Debugging stuff, delete later
     //
-    c8.i_index = C8_PROGRAM_START_LOCATION + 0x300;
-    uint8_t vxn[3][5] = {
-        {0xC3, 0xC3, 0xC3, 0x66, 0x18},
-        {0xC3, 0x66, 0x18, 0x66, 0xC3},
-        {0xC3, 0xE3, 0xF3, 0xDB, 0xC7},
-    };
+    // c8.i_index = C8_PROGRAM_START_LOCATION + 0x300;
+    // uint8_t vxn[3][5] = {
+    //     {0xC3, 0xC3, 0xC3, 0x66, 0x18},
+    //     {0xC3, 0x66, 0x18, 0x66, 0xC3},
+    //     {0xC3, 0xE3, 0xF3, 0xDB, 0xC7},
+    // };
 
-    for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-
-            c8.ram[(C8_PROGRAM_START_LOCATION + 0x300) * (i + 1) + j] = vxn[i][j];
-        }
-    }
+    // for (int i = 0; i < 3; ++i)
+    // {
+    //     for (int j = 0; j < 5; j++)
+    //     {
+    //         c8.ram[(C8_PROGRAM_START_LOCATION + 0x300) * (i + 1) + j] = vxn[i][j];
+    //     }
+    // }
 
     //
     // End of debugging stuff
@@ -133,9 +132,11 @@ int c8_run(int argc, char *argv[])
     {
         // Raylib runs at target 60 fps, so each run of this loop
         // we should process around 12 instructions to achieve ~700 instructions per second.
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 1; i++)
         {
             execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
+
+            WaitTime(1);
         }
 
         BeginDrawing();
@@ -144,7 +145,7 @@ int c8_run(int argc, char *argv[])
 
         C8_LOG("Finished Raylib frame\n");
 
-        WaitTime(10);
+        WaitTime(1);
     }
 
     CloseWindow();
