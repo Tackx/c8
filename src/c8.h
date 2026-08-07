@@ -16,27 +16,10 @@ typedef uint16_t C8_I_INDEX;
 typedef uint16_t C8_STACK[16];
 typedef uint8_t C8_DELAY_TIMER;
 typedef uint8_t C8_SOUND_TIMER;
-typedef uint8_t C8_VARIABLE_REGISTERS[16];
 
-typedef enum
-{
-    V0,
-    V1,
-    V2,
-    V3,
-    V4,
-    V5,
-    V6,
-    V7,
-    V8,
-    V9,
-    VA,
-    VB,
-    VC,
-    VD,
-    VE,
-    VF
-} C8_VARIABLE_REGISTER;
+typedef uint8_t C8_VX;
+
+typedef uint8_t C8_VARIABLE_REGISTERS[16];
 
 // TODO: Stack pointer?
 

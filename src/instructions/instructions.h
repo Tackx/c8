@@ -7,10 +7,13 @@ typedef uint16_t C8_INSTRUCTION;
 typedef struct C8_INSTRUCTION_PARAMETERS
 {
     C8_PROGRAM_COUNTER pc;
+    C8_VX vx;
+    uint8_t vx_value;
 } C8_INSTRUCTION_PARAMETERS;
 
 typedef struct C8_INSTRUCTION_DATA
 {
+    // TODO: Could be an enum?
     uint8_t type;
     C8_INSTRUCTION_PARAMETERS params;
 } C8_INSTRUCTION_DATA;

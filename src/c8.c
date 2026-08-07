@@ -121,11 +121,6 @@ int c8_run(int argc, char *argv[])
             execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
         }
 
-        for (int i = 0; i < 3; ++i)
-        {
-            write_sprite(&c8, i * 10, 0, vxn[i], 5);
-        }
-
         BeginDrawing();
         draw_screen(&c8);
         EndDrawing();

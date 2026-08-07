@@ -22,6 +22,8 @@ static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
     C8_LOG("Jumped to memory address %d\n", pc);
 }
 
+static void set_vx(C8 *c8, C8_VX vx, uint8_t value) { c8->v_regs[vx] = value; };
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -43,20 +45,37 @@ C8_INSTRUCTION fetch_instruction(C8 *c8)
 
 C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 {
-    // 00000000
     uint8_t decoded = (instruction >> 12) & 0xFF;
     C8_LOG("Decoded instruction type: %d\n", decoded);
 
-    // TODO: Decode and insert params
     C8_INSTRUCTION_DATA d = {
         .type = decoded,
     };
 
-    if (decoded == C8_INSTRUCTION_JUMP)
+    switch (d.type)
+    {
+    case C8_INSTRUCTION_JUMP:
     {
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
         d.params.pc = pc;
+
+        break;
+    }
+    case C8_INSTRUCTION_VX_SET:
+    {
+        // 0110 1111 0000 0001
+
+        C8_VX vx = instruction >> 8 & 0xF;
+        uint8_t value = instruction & 0xFF;
+
+        d.params.vx = vx;
+        d.params.vx_value = value;
+    }
+    break;
+
+    default:
+        break;
     }
 
     return d;
