@@ -49,7 +49,7 @@ static void draw(C8 *c8, uint8_t x, uint8_t y, uint8_t height)
 
     C8_LOG("Executing draw\nX: %d\nY:%d\nHeight:%d\n", x, y, height);
 
-    uint8_t *sprite = &c8->ram[c8->i_index];
+    uint8_t *sprite = &(c8->ram[c8->i_index]);
 
     for (int i = 0; i < height; ++i)
     {
