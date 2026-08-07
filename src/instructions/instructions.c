@@ -22,7 +22,19 @@ static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
     C8_LOG("Jumped to memory address %d\n", pc);
 }
 
-static void set_vx(C8 *c8, C8_VX vx, uint8_t value) { c8->v_regs[vx] = value; };
+static void set_vx(C8 *c8, C8_VX vx, uint8_t value)
+{
+    c8->v_regs[vx] = value;
+
+    C8_LOG("Set register %d to value %d\n", vx, value);
+};
+
+static void add_vx(C8 *c8, C8_VX vx, uint8_t value)
+{
+    c8->v_regs[vx] += value;
+
+    C8_LOG("Added value %d to register %d\n", value, vx);
+};
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
@@ -62,17 +74,28 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         break;
     }
+
     case C8_INSTRUCTION_VX_SET:
     {
-        // 0110 1111 0000 0001
-
         C8_VX vx = instruction >> 8 & 0xF;
         uint8_t value = instruction & 0xFF;
 
         d.params.vx = vx;
         d.params.vx_value = value;
+
+        break;
     }
-    break;
+
+    case C8_INSTRUCTION_VX_ADD:
+    {
+        C8_VX vx = instruction >> 8 & 0xF;
+        uint8_t value = instruction & 0xFF;
+
+        d.params.vx = vx;
+        d.params.vx_value = value;
+
+        break;
+    }
 
     default:
         break;
@@ -101,9 +124,15 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
     case C8_INSTRUCTION_VX_ADD:
         C8_LOG("Recognized the VX ADD instruction\n");
+
+        add_vx(c8, data.params.vx, data.params.vx_value);
+
         break;
     case C8_INSTRUCTION_VX_SET:
         C8_LOG("Recognized the VX SET instruction\n");
+
+        set_vx(c8, data.params.vx, data.params.vx_value);
+
         break;
     case C8_INSTRUCTION_I_SET:
         C8_LOG("Recognized the I SET instruction\n");
