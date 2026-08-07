@@ -9,6 +9,7 @@ typedef struct C8_INSTRUCTION_PARAMETERS
     C8_PROGRAM_COUNTER pc;
     C8_VX vx;
     uint8_t vx_value;
+    uint16_t i_value;
 } C8_INSTRUCTION_PARAMETERS;
 
 typedef struct C8_INSTRUCTION_DATA

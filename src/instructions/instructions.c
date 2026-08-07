@@ -36,6 +36,13 @@ static void add_vx(C8 *c8, C8_VX vx, uint8_t value)
     C8_LOG("Added value %d to register %d\n", value, vx);
 };
 
+static void set_i(C8 *c8, uint16_t value)
+{
+    c8->i_index = value;
+
+    C8_LOG("Set Index register to value %d", value);
+};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -97,6 +104,15 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    case C8_INSTRUCTION_I_SET:
+    {
+        uint16_t value = instruction & 0xFFF;
+
+        d.params.i_value = value;
+
+        break;
+    }
+
     default:
         break;
     }
@@ -136,6 +152,9 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
     case C8_INSTRUCTION_I_SET:
         C8_LOG("Recognized the I SET instruction\n");
+
+        set_i(c8, data.params.i_value);
+
         break;
     case C8_INSTRUCTION_DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
