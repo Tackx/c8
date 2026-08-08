@@ -10,7 +10,7 @@ WIP
 
 ## Build
 
-From the root of the repo:
+From the root of the repo, builds in debug configuration by default:
 
 Linux:
 
@@ -29,13 +29,13 @@ cd build && ./premake5.exe gmake && cd .. && make
 Debug:
 
 ```bash
-./bin/debug/c8 ./tests/ibm.ch8
+./bin/Debug/c8 ./tests/ibm.ch8
 ```
 
 Release:
 
 ```bash
-./bin/release/c8 ./tests/ibm.ch8
+./bin/Release/c8 ./tests/ibm.ch8
 ```
 
 ## Tests
