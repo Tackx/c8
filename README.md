@@ -15,7 +15,7 @@ From the root of the repo:
 Linux:
 
 ```bash
-cd build && ./premake5 gmake && cd .. && make
+cd build && chmod +x ./premake5 && ./premake5 gmake && cd .. && make
 ```
 
 Windows:
