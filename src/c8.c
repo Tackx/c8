@@ -107,6 +107,16 @@ int c8_run(int argc, char *argv[])
             // WaitTime(1);
         }
 
+        if (c8.delay_timer > 0)
+        {
+            --c8.delay_timer;
+        }
+
+        if (c8.sound_timer > 0)
+        {
+            --c8.sound_timer;
+        }
+
         BeginDrawing();
         draw_screen(&c8);
         EndDrawing();
