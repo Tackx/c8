@@ -58,7 +58,7 @@
       "windows": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}.exe",
         "miDebuggerPath": "gdb.exe",
-        "args": ["${workspaceFolder}\\tests\\vxn.ch8"]
+        "args": ["${workspaceFolder}\\tests\\3-corax+.ch8"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",

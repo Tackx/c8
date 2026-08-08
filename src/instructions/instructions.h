@@ -4,7 +4,8 @@
 
 typedef enum C8_INSTRUCTION_TYPE
 {
-    CLEAR_SCREEN = 0x00,
+    ZERO = 0x00, // Additional logic needed to determine if it's CLEAR_SCREEN or SUB_RET
+    CLEAR_SCREEN = 0xE0,
     JUMP = 0x01,
     VX_SET = 0x06,
     VX_ADD = 0x07,

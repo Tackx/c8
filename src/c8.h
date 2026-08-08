@@ -43,6 +43,7 @@ typedef struct C8
     C8_PROGRAM_COUNTER pc;
     C8_I_INDEX i_index;
     C8_STACK stack;
+    uint8_t sp;
     C8_DELAY_TIMER delay_timer;
     C8_SOUND_TIMER sound_timer;
     C8_VARIABLE_REGISTERS v_regs;

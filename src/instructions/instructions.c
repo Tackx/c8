@@ -68,12 +68,23 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
 
 static void sub_call(C8 *c8, C8_PROGRAM_COUNTER pc)
 {
+
+    // Push current pc location to the stack
+    // before updating the pc to point at the new location
+    c8->stack[(c8->sp)++] = c8->pc;
+
     c8->pc = pc;
 
-    C8_LOG("Set PC to address %x\n", pc);
+    C8_LOG("Subroutine call: set PC to address %x\n", pc);
 };
 
-static void sub_return(C8 *c8) {};
+static void sub_ret(C8 *c8)
+{
+
+    c8->pc = c8->stack[--(c8->sp)];
+
+    C8_LOG("Subroutine return: set PC to address %x\n", c8->pc);
+};
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
@@ -103,8 +114,32 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         .type = decoded,
     };
 
-    switch (d.type)
+    switch (decoded)
     {
+    case ZERO:
+
+    {
+        uint8_t last_byte = (C8_INSTR)(instruction & 0xFF);
+
+        switch (last_byte)
+        {
+        case CLEAR_SCREEN:
+            d.type = CLEAR_SCREEN;
+
+            break;
+
+        case SUB_RET:
+            d.type = SUB_RET;
+
+            break;
+
+        default:
+            break;
+        }
+
+        break;
+    }
+
     case JUMP:
     {
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
@@ -154,6 +189,15 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         d.params.x_reg = x_reg;
         d.params.y_reg = y_reg;
         d.params.draw_height = height;
+
+        break;
+    }
+
+    case SUB_CALL:
+    {
+        C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
+
+        d.params.pc = pc;
 
         break;
     }
@@ -210,6 +254,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the DRAW instruction\n");
 
         draw(c8, data.params.x_reg, data.params.y_reg, data.params.draw_height);
+
+        break;
+
+    case SUB_CALL:
+        C8_LOG("Recognized the SUB_CALL instruction\n");
+
+        sub_call(c8, data.params.pc);
+
+        break;
+
+    case SUB_RET:
+        C8_LOG("Recognized the SUB_RET instruction\n");
+
+        sub_ret(c8);
 
         break;
 
