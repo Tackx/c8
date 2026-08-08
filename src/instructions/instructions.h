@@ -2,7 +2,7 @@
 
 #include "c8.h"
 
-typedef enum C8_INSTR
+typedef enum C8_INSTRUCTION_TYPE
 {
     CLEAR_SCREEN = 0x00,
     JUMP = 0x01,
@@ -25,12 +25,10 @@ typedef struct C8_INSTRUCTION_PARAMETERS
     uint8_t draw_height;
     uint8_t x_reg;
     uint8_t y_reg;
-
 } C8_INSTRUCTION_PARAMETERS;
 
 typedef struct C8_INSTRUCTION_DATA
 {
-    // TODO: Could be an enum?
     C8_INSTR type;
     C8_INSTRUCTION_PARAMETERS params;
 } C8_INSTRUCTION_DATA;
