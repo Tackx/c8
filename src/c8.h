@@ -1,8 +1,19 @@
 #pragma once
 
-#include "consts/consts.h"
 #include <stdbool.h>
 #include <stdint.h>
+
+// Display
+#define C8_HEIGHT_PIXELS 32
+#define C8_WIDTH_PIXELS 64
+#define C8_RESOLUTION_MULTIPLIER 10
+#define C8_ACTUAL_WIDTH (C8_WIDTH_PIXELS * C8_RESOLUTION_MULTIPLIER)
+#define C8_ACTUAL_HEIGHT (C8_HEIGHT_PIXELS * C8_RESOLUTION_MULTIPLIER)
+
+// Memory
+#define C8_RAM_SIZE 4096
+#define C8_FONT_START_LOCATION 0x050
+#define C8_PROGRAM_START_LOCATION 0x200
 
 typedef uint8_t C8_RAM[C8_RAM_SIZE];
 

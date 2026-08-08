@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "c8.h"
-#include "consts/consts.h"
 #include "display/display.h"
 #include "instructions/instructions.h"
 #include "logger/logger.h"

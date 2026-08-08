@@ -1,6 +1,6 @@
 #include "raylib.h"
 
-#include "consts/consts.h"
+#include "c8.h"
 #include "display.h"
 
 void init_display(void)
