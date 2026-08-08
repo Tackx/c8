@@ -50,7 +50,7 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
     uint8_t x = c8->v_regs[x_reg];
     uint8_t y = c8->v_regs[y_reg];
 
-    C8_LOG("Executing draw\nX: %d\nY:%d\nHeight:%d\n", x, y, height);
+    C8_LOG("Executing draw. X: %d; Y: %d; Height: %d\n", x, y, height);
 
     uint8_t *sprite = &(c8->ram[c8->i_index]);
 
