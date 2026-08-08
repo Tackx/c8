@@ -2,12 +2,17 @@
 
 #include "c8.h"
 
-#define C8_INSTRUCTION_CLEAR_SCREEN 0x00
-#define C8_INSTRUCTION_JUMP 0x01
-#define C8_INSTRUCTION_VX_SET 0x06
-#define C8_INSTRUCTION_VX_ADD 0x07
-#define C8_INSTRUCTION_I_SET 0x0A
-#define C8_INSTRUCTION_DRAW 0x0D
+typedef enum C8_INSTR
+{
+    CLEAR_SCREEN = 0x00,
+    JUMP = 0x01,
+    VX_SET = 0x06,
+    VX_ADD = 0x07,
+    I_SET = 0x0A,
+    DRAW = 0x0D,
+    SUB_CALL = 0x02,
+    SUB_RET = 0xEE
+} C8_INSTR;
 
 typedef uint16_t C8_INSTRUCTION;
 
@@ -26,7 +31,7 @@ typedef struct C8_INSTRUCTION_PARAMETERS
 typedef struct C8_INSTRUCTION_DATA
 {
     // TODO: Could be an enum?
-    uint8_t type;
+    C8_INSTR type;
     C8_INSTRUCTION_PARAMETERS params;
 } C8_INSTRUCTION_DATA;
 

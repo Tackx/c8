@@ -66,6 +66,10 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
     }
 }
 
+static void sub_call(C8 *c8) {};
+
+static void sub_return(C8 *c8) {};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -87,7 +91,7 @@ C8_INSTRUCTION fetch_instruction(C8 *c8)
 
 C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 {
-    uint8_t decoded = (instruction >> 12) & 0xFF;
+    C8_INSTR decoded = (C8_INSTR)((instruction >> 12) & 0xFF);
     C8_LOG("Decoded instruction type: %d\n", decoded);
 
     C8_INSTRUCTION_DATA d = {
@@ -96,7 +100,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
     switch (d.type)
     {
-    case C8_INSTRUCTION_JUMP:
+    case JUMP:
     {
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
@@ -105,7 +109,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case C8_INSTRUCTION_VX_SET:
+    case VX_SET:
     {
         C8_VX vx = instruction >> 8 & 0xF;
         uint8_t value = instruction & 0xFF;
@@ -116,7 +120,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case C8_INSTRUCTION_VX_ADD:
+    case VX_ADD:
     {
         C8_VX vx = instruction >> 8 & 0xF;
         uint8_t value = instruction & 0xFF;
@@ -127,7 +131,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case C8_INSTRUCTION_I_SET:
+    case I_SET:
     {
         uint16_t value = instruction & 0xFFF;
 
@@ -136,7 +140,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case C8_INSTRUCTION_DRAW:
+    case DRAW:
     {
         uint8_t x_reg = instruction >> 8 & 0xF;
         uint8_t y_reg = instruction >> 4 & 0xF;
@@ -162,37 +166,41 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
 
     switch (data.type)
     {
-    case C8_INSTRUCTION_CLEAR_SCREEN:
+    case CLEAR_SCREEN:
         C8_LOG("Recognized the clear screen instruction\n");
 
         clear_screen(c8);
 
         break;
-    case C8_INSTRUCTION_JUMP:
+
+    case JUMP:
         C8_LOG("Recognized the jump instruction\n");
 
         jump(c8, data.params.pc);
 
         break;
-    case C8_INSTRUCTION_VX_ADD:
-        C8_LOG("Recognized the VX ADD instruction\n");
 
-        add_vx(c8, data.params.vx, data.params.vx_value);
-
-        break;
-    case C8_INSTRUCTION_VX_SET:
+    case VX_SET:
         C8_LOG("Recognized the VX SET instruction\n");
 
         set_vx(c8, data.params.vx, data.params.vx_value);
 
         break;
-    case C8_INSTRUCTION_I_SET:
+
+    case VX_ADD:
+        C8_LOG("Recognized the VX ADD instruction\n");
+
+        add_vx(c8, data.params.vx, data.params.vx_value);
+
+        break;
+
+    case I_SET:
         C8_LOG("Recognized the I SET instruction\n");
 
         set_i(c8, data.params.i_value);
 
         break;
-    case C8_INSTRUCTION_DRAW:
+    case DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
 
         draw(c8, data.params.x_reg, data.params.y_reg, data.params.draw_height);

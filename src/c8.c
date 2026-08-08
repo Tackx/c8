@@ -98,7 +98,7 @@ int c8_run(int argc, char *argv[])
 
     while (!WindowShouldClose())
     {
-        // Raylib runs at target 60 fps, so each run of this loop
+        // Raylib runs at target 60 fps, so each run of the main loop
         // we should process around 12 instructions to achieve ~700 instructions per second.
         for (int i = 0; i < 12; i++)
         {
