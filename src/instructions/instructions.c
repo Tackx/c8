@@ -20,28 +20,28 @@ static void jump(C8 *c8, C8_PROGRAM_COUNTER pc)
 {
     c8->pc = pc;
 
-    C8_LOG("Jumped to memory address %d\n", pc);
+    C8_LOG("Jumped to memory address %x\n", pc);
 }
 
 static void set_vx(C8 *c8, C8_VX vx, uint8_t value)
 {
     c8->v_regs[vx] = value;
 
-    C8_LOG("Set register %d to value %d\n", vx, value);
+    C8_LOG("Set register %x to value %d\n", vx, value);
 };
 
 static void add_vx(C8 *c8, C8_VX vx, uint8_t value)
 {
     c8->v_regs[vx] += value;
 
-    C8_LOG("Added value %d to register %d\n", value, vx);
+    C8_LOG("Added value %d to register %x\n", value, vx);
 };
 
 static void set_i(C8 *c8, uint16_t value)
 {
     c8->i_index = value;
 
-    C8_LOG("Set Index register to value %d\n", value);
+    C8_LOG("Set Index register to value %x\n", value);
 };
 
 static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
@@ -66,7 +66,12 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
     }
 }
 
-static void sub_call(C8 *c8) {};
+static void sub_call(C8 *c8, C8_PROGRAM_COUNTER pc)
+{
+    c8->pc = pc;
+
+    C8_LOG("Set PC to address %x\n", pc);
+};
 
 static void sub_return(C8 *c8) {};
 
@@ -200,12 +205,14 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         set_i(c8, data.params.i_value);
 
         break;
+
     case DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
 
         draw(c8, data.params.x_reg, data.params.y_reg, data.params.draw_height);
 
         break;
+
     default:
         break;
     }
