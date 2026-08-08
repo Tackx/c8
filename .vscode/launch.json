@@ -24,15 +24,17 @@
       "windows": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}.exe",
         "miDebuggerPath": "gdb.exe",
-        "args": ["${workspaceFolder}\\bin\\Debug\\test.txt"]
+        "args": ["${workspaceFolder}\\tests\\vxn.ch8"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",
-        "MIMode": "lldb"
+        "MIMode": "lldb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "linux": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",
-        "miDebuggerPath": "/usr/bin/gdb"
+        "miDebuggerPath": "/usr/bin/gdb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "preLaunchTask": "build debug"
     },
@@ -55,15 +57,18 @@
       ],
       "windows": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}.exe",
-        "miDebuggerPath": "gdb.exe"
+        "miDebuggerPath": "gdb.exe",
+        "args": ["${workspaceFolder}\\tests\\vxn.ch8"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",
-        "MIMode": "lldb"
+        "MIMode": "lldb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "linux": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",
-        "miDebuggerPath": "/usr/bin/gdb"
+        "miDebuggerPath": "/usr/bin/gdb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "preLaunchTask": "build debug no premake"
     },
@@ -79,15 +84,18 @@
       "MIMode": "gdb",
       "windows": {
         "program": "${workspaceFolder}/bin/Release/${workspaceFolderBasename}.exe",
-        "miDebuggerPath": "gdb.exe"
+        "miDebuggerPath": "gdb.exe",
+        "args": ["${workspaceFolder}\\tests\\vxn.ch8"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Release/${workspaceFolderBasename}",
-        "MIMode": "lldb"
+        "MIMode": "lldb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "linux": {
         "program": "${workspaceFolder}/bin/Release/${workspaceFolderBasename}",
-        "miDebuggerPath": "/usr/bin/gdb"
+        "miDebuggerPath": "/usr/bin/gdb",
+        "args": ["${workspaceFolder}/tests/vxn.ch8"]
       },
       "preLaunchTask": "build release"
     }
