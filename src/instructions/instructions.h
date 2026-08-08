@@ -11,8 +11,8 @@ typedef struct C8_INSTRUCTION_PARAMETERS
     uint8_t vx_value;
     uint16_t i_value;
     uint8_t draw_height;
-    uint8_t draw_x;
-    uint8_t draw_y;
+    uint8_t x_reg;
+    uint8_t y_reg;
 
 } C8_INSTRUCTION_PARAMETERS;
 

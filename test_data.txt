@@ -1,1 +1,43 @@
-'\xA2\x0E\xD0\x05\xA2\x13\xDA\x05\xA2\x18\xDF\x05\x12\x00\xC3\xC3\xC3\x66\x18\xC3\x66\x18\x66\xC3\xC3\xE3\xF3\xDB\xC7'
+// Program gets loaded into memory
+// Set index register to first sprite
+// Draw first sprite
+// Set index register to second sprite
+// ...
+
+\x60\x00 // Set register 0 to hold X=0
+\x61\x00 // Set register 1 to hold Y=0
+\xA2\x16 // Set index to V
+\xD0\x15 // Draw X from register 0, Y from register 1, 5 height
+
+
+\x60\x0A // Set register 0 to hold X=10
+\xA2\x1B // Set index to X
+\xD0\x15 // Draw X from register 0, Y from register 1, 5 height
+
+\x60\x14 // Set register 0 to hold X=20
+\xA2\x20 // Set index to N
+\xD0\x15 // Draw X from register 0, Y from register 1, 5 height
+
+\x12\x00 // Jump to the beginning, creating a loop
+
+    /* 0x200 */ \x60\x00
+    /* 0x202 */ \x61\x00
+    /* 0x204 */ \xA2\x16
+    /* 0x206 */ \xD0\x15
+    /* 0x208 */ \x60\x0A
+    /* 0x20A */ \xA2\x1B
+    /* 0x20C */ \xD0\x15
+    /* 0x20E */ \x60\x14
+    /* 0x210 */ \xA2\x20
+    /* 0x212 */ \xD0\x15
+    /* 0x214 */ \x12\x00
+    /* 0x216 */ \xC3\xC3\xC3\x66\x18
+    /* 0x21B */ \xC3\x66\x18\x66\xC3
+    /* 0x220 */ \xC3\xE3\xF3\xDB\xC7
+
+
+        \xC3\xC3\xC3\x66\x18 // V
+        \xC3\x66\x18\x66\xC3 // X
+        \xC3\xE3\xF3\xDB\xC7 // N
+
+    '\x60\x00\x61\x00\xA2\x16\xD0\x15\x60\x0A\xA2\x1B\xD0\x15\x60\x14\xA2\x20\xD0\x15\x12\x00\xC3\xC3\xC3\x66\x18\xC3\x66\x18\x66\xC3\xC3\xE3\xF3\xDB\xC7'

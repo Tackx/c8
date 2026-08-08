@@ -44,8 +44,11 @@ static void set_i(C8 *c8, uint16_t value)
     C8_LOG("Set Index register to value %d\n", value);
 };
 
-static void draw(C8 *c8, uint8_t x, uint8_t y, uint8_t height)
+static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
 {
+
+    uint8_t x = c8->v_regs[x_reg];
+    uint8_t y = c8->v_regs[y_reg];
 
     C8_LOG("Executing draw\nX: %d\nY:%d\nHeight:%d\n", x, y, height);
 
@@ -135,12 +138,12 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
     case C8_INSTRUCTION_DRAW:
     {
-        uint8_t x = instruction >> 8 & 0xF;
-        uint8_t y = instruction >> 4 & 0xF;
+        uint8_t x_reg = instruction >> 8 & 0xF;
+        uint8_t y_reg = instruction >> 4 & 0xF;
         uint8_t height = instruction & 0xF;
 
-        d.params.draw_x = x;
-        d.params.draw_y = y;
+        d.params.x_reg = x_reg;
+        d.params.y_reg = y_reg;
         d.params.draw_height = height;
 
         break;
@@ -192,7 +195,7 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
     case C8_INSTRUCTION_DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
 
-        draw(c8, data.params.draw_x, data.params.draw_y, data.params.draw_height);
+        draw(c8, data.params.x_reg, data.params.y_reg, data.params.draw_height);
 
         break;
     default:
