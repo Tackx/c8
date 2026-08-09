@@ -53,22 +53,6 @@ static int load_data(C8 *c8, char *path)
     return 0;
 }
 
-// Height is needed so that we know how many bytes to read from the start
-// pointed to by sprite
-static void write_sprite(C8 *c8, uint8_t x, uint8_t y, const uint8_t *sprite, uint8_t height)
-{
-    for (int i = 0; i < height; ++i)
-    {
-        // TODO: Fix magic number
-        for (int j = 0; j < 8; ++j)
-        {
-            bool bit = (*(sprite + i) >> (7 - j)) & 1;
-            // TODO: Can detect collisions here
-            c8->display[y + i][x + j] ^= bit;
-        }
-    }
-}
-
 C8 init()
 {
     C8 c8 = {.pc = C8_PROGRAM_START_LOCATION};
