@@ -107,29 +107,25 @@ C8_INSTRUCTION fetch_instruction(C8 *c8)
 
 C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 {
-    C8_INSTR decoded = (C8_INSTR)((instruction >> 12) & 0xFF);
-    C8_LOG("Decoded instruction type: %d\n", decoded);
+    C8_OP_HN high_nibble = (C8_OP_HN)((instruction >> 12) & 0xFF);
 
-    C8_INSTRUCTION_DATA d = {
-        .type = decoded,
-    };
+    C8_INSTRUCTION_DATA d = {};
 
-    switch (decoded)
+    switch (high_nibble)
     {
-    case ZERO:
-
+    case C8_OP_HN_0:
     {
-        uint8_t last_byte = (C8_INSTR)(instruction & 0xFF);
+        C8_OP_HN_0_LB low_byte = (C8_OP_HN_0_LB)(instruction & 0xFF);
 
-        switch (last_byte)
+        switch (low_byte)
         {
-        case CLEAR_SCREEN:
-            d.type = CLEAR_SCREEN;
+        case C8_OP_HN_0_LB_E0:
+            d.type = C8_I_CLEAR_SCREEN;
 
             break;
 
-        case SUB_RET:
-            d.type = SUB_RET;
+        case C8_OP_HN_0_LB_EE:
+            d.type = C8_I_SUB_RET;
 
             break;
 
@@ -140,8 +136,10 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case JUMP:
+    case C8_OP_HN_1:
     {
+        d.type = C8_I_JUMP;
+
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
         d.params.pc = pc;
@@ -149,8 +147,9 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case VX_SET:
+    case C8_OP_HN_6:
     {
+        d.type = C8_I_VX_SET;
         C8_VX vx = instruction >> 8 & 0xF;
         uint8_t value = instruction & 0xFF;
 
@@ -160,8 +159,9 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case VX_ADD:
+    case C8_OP_HN_7:
     {
+        d.type = C8_I_VX_ADD;
         C8_VX vx = instruction >> 8 & 0xF;
         uint8_t value = instruction & 0xFF;
 
@@ -171,8 +171,9 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case I_SET:
+    case C8_OP_HN_A:
     {
+        d.type = C8_I_SET_I;
         uint16_t value = instruction & 0xFFF;
 
         d.params.i_value = value;
@@ -180,8 +181,9 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case DRAW:
+    case C8_OP_HN_D:
     {
+        d.type = C8_I_DRAW;
         uint8_t x_reg = instruction >> 8 & 0xF;
         uint8_t y_reg = instruction >> 4 & 0xF;
         uint8_t height = instruction & 0xF;
@@ -193,8 +195,9 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
-    case SUB_CALL:
+    case C8_OP_HN_2:
     {
+        d.type = C8_I_SUB_CALL;
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
         d.params.pc = pc;
@@ -206,6 +209,8 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    C8_LOG("Decoded instruction type: %02hhX\n", d.type);
+
     return d;
 }
 
@@ -215,56 +220,56 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
 
     switch (data.type)
     {
-    case CLEAR_SCREEN:
+    case C8_I_CLEAR_SCREEN:
         C8_LOG("Recognized the clear screen instruction\n");
 
         clear_screen(c8);
 
         break;
 
-    case JUMP:
+    case C8_I_JUMP:
         C8_LOG("Recognized the jump instruction\n");
 
         jump(c8, data.params.pc);
 
         break;
 
-    case VX_SET:
+    case C8_I_VX_SET:
         C8_LOG("Recognized the VX SET instruction\n");
 
         set_vx(c8, data.params.vx, data.params.vx_value);
 
         break;
 
-    case VX_ADD:
+    case C8_I_VX_ADD:
         C8_LOG("Recognized the VX ADD instruction\n");
 
         add_vx(c8, data.params.vx, data.params.vx_value);
 
         break;
 
-    case I_SET:
+    case C8_I_SET_I:
         C8_LOG("Recognized the I SET instruction\n");
 
         set_i(c8, data.params.i_value);
 
         break;
 
-    case DRAW:
+    case C8_I_DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
 
         draw(c8, data.params.x_reg, data.params.y_reg, data.params.draw_height);
 
         break;
 
-    case SUB_CALL:
+    case C8_I_SUB_CALL:
         C8_LOG("Recognized the SUB_CALL instruction\n");
 
         sub_call(c8, data.params.pc);
 
         break;
 
-    case SUB_RET:
+    case C8_I_SUB_RET:
         C8_LOG("Recognized the SUB_RET instruction\n");
 
         sub_ret(c8);
