@@ -54,6 +54,7 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
 
     uint8_t *sprite = &(c8->ram[c8->i_index]);
 
+    bool off = false;
     for (int i = 0; i < height; ++i)
     {
         // TODO: Fix magic number
@@ -62,7 +63,21 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
             bool bit = (*(sprite + i) >> (7 - j)) & 1;
             // TODO: Can detect collisions here
             c8->display[y + i][x + j] ^= bit;
+
+            if (!c8->display[y + i][x + j])
+            {
+                off = true;
+            }
         }
+    }
+
+    if (off)
+    {
+        c8->v_regs[15] = 1;
+    }
+    else
+    {
+        c8->v_regs[15] = 0;
     }
 }
 
@@ -424,6 +439,8 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
 
     default:
+        C8_LOG("Unrecognized instruction type (this should never happen?)\n");
+
         break;
     }
 }
