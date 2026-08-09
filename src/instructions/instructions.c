@@ -224,6 +224,42 @@ static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     }
 };
 
+// TODO: Make this configurable to work with reg_y for compatibility
+// https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#8xy6-and-8xye-shift
+static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    uint8_t val = c8->v_regs[reg_x] & 1;
+
+    c8->v_regs[reg_x] = c8->v_regs[reg_x] >> 1;
+
+    if (val)
+    {
+        c8->v_regs[C8_REG_VF] = 1;
+    }
+    else
+    {
+        c8->v_regs[C8_REG_VF] = 0;
+    }
+};
+
+// TODO: Make this configurable to work with reg_y for compatibility
+// https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#8xy6-and-8xye-shift
+static void shift_left(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    uint8_t val = c8->v_regs[reg_x] & 1;
+
+    c8->v_regs[reg_x] = c8->v_regs[reg_x] << 1;
+
+    if (val)
+    {
+        c8->v_regs[C8_REG_VF] = 1;
+    }
+    else
+    {
+        c8->v_regs[C8_REG_VF] = 0;
+    }
+};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -429,6 +465,22 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         case C8_OP_HN_8_LN_7:
             d.type = C8_I_SUBTRACT_X_Y;
+
+            d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
+
+            break;
+
+        case C8_OP_HN_8_LN_6:
+            d.type = C8_I_SHIFT_R;
+
+            d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
+
+            break;
+
+        case C8_OP_HN_8_LN_E:
+            d.type = C8_I_SHIFT_L;
 
             d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
             d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
@@ -647,6 +699,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_SUBTRACT_X_Y instruction\n");
 
         sub_x_from_y(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_SHIFT_R:
+        C8_LOG("Recognized the C8_I_SHIFT_R instruction\n");
+
+        shift_right(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_SHIFT_L:
+        C8_LOG("Recognized the C8_I_SHIFT_L instruction\n");
+
+        shift_left(c8, data.params.vx, data.params.vy);
 
         break;
 

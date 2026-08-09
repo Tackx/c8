@@ -41,7 +41,9 @@ typedef enum C8_OP_HN_8_LN
     C8_OP_HN_8_LN_3,
     C8_OP_HN_8_LN_4,
     C8_OP_HN_8_LN_5,
-    C8_OP_HN_8_LN_7 = 0x07,
+    C8_OP_HN_8_LN_6,
+    C8_OP_HN_8_LN_7,
+    C8_OP_HN_8_LN_E = 0xE,
 
 } C8_OP_HN_8_LN;
 
@@ -73,6 +75,8 @@ typedef enum C8_I
     C8_I_ADD,
     C8_I_SUBTRACT_Y_X,
     C8_I_SUBTRACT_X_Y,
+    C8_I_SHIFT_R,
+    C8_I_SHIFT_L
 } C8_I;
 
 typedef uint16_t C8_INSTRUCTION;
