@@ -104,7 +104,7 @@ int c8_run(int argc, char *argv[])
         {
             execute_instruction(&c8, decode_instruction(fetch_instruction(&c8)));
 
-            // WaitTime(1);
+            // WaitTime(0.5);
         }
 
         if (c8.delay_timer > 0)

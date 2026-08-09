@@ -2,6 +2,7 @@
 
 #include "c8.h"
 
+// High nibble
 typedef enum C8_OP_HN
 {
     C8_OP_HN_0 = 0x0,
@@ -17,17 +18,20 @@ typedef enum C8_OP_HN
     C8_OP_HN_D = 0xD
 } C8_OP_HN;
 
+// Low byte of high nibble 0
 typedef enum C8_OP_HN_0_LB
 {
     C8_OP_HN_0_LB_E0 = 0xE0,
     C8_OP_HN_0_LB_EE = 0xEE
 } C8_OP_HN_0_LB;
 
+// Low nibble of high nibble 5
 typedef enum C8_OP_HN_5_LN
 {
     C8_OP_HN_5_LN_0 = 0x0
 } C8_OP_HN_5_LN;
 
+// Low nibble of high nibble 9
 typedef enum C8_OP_HN_9_LN
 {
     C8_OP_HN_9_LN_0 = 0x0
