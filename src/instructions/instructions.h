@@ -98,7 +98,6 @@ typedef struct C8_INSTRUCTION_PARAMETERS
     uint8_t n;
     uint8_t nn;
     uint16_t nnn;
-
 } C8_INSTRUCTION_PARAMETERS;
 
 typedef struct C8_INSTRUCTION_DATA

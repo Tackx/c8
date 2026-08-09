@@ -64,7 +64,7 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
         // TODO: Fix magic number
         for (int j = 0; j < 8; ++j)
         {
-            // TODO: Can detect collisions here
+            // TODO: Implement wrap?
             if (y + i < C8_HEIGHT_PIXELS && x + j < C8_WIDTH_PIXELS)
             {
                 bool old = c8->display[y + i][x + j];
