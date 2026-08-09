@@ -27,7 +27,7 @@ static void set_vx(C8 *c8, C8_VX vx, uint8_t value)
 {
     c8->v_regs[vx] = value;
 
-    C8_LOG("Set register %02hhX to value %d\n", vx, value);
+    C8_LOG("Set register V%02hhX to value %d\n", vx, value);
 };
 
 static void add_vx(C8 *c8, C8_VX vx, uint8_t value)
@@ -156,7 +156,7 @@ static void set(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 { //
     c8->v_regs[reg_x] = c8->v_regs[reg_y];
 
-    C8_LOG("Set register %02hhX to value of register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%02hhX to value of register V%02hhX \n", reg_x, reg_y);
 };
 
 static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -164,7 +164,7 @@ static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] | c8->v_regs[reg_y];
 
-    C8_LOG("Set register %02hhX to binary OR with register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%02hhX to binary OR with register V%02hhX \n", reg_x, reg_y);
 };
 
 static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -172,7 +172,7 @@ static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] & c8->v_regs[reg_y];
 
-    C8_LOG("Set register %02hhX to binary AND with register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%02hhX to binary AND with register V%02hhX \n", reg_x, reg_y);
 };
 
 static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -180,7 +180,7 @@ static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] ^ c8->v_regs[reg_y];
 
-    C8_LOG("Set register %02hhX to logical XOR with register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%02hhX to logical XOR with register V%02hhX \n", reg_x, reg_y);
 };
 
 static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
