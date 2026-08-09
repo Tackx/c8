@@ -133,6 +133,29 @@ static void skip_if_not_vx_vy(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     }
 };
 
+static void set(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{ //
+    c8->v_regs[reg_x] = c8->v_regs[reg_y];
+};
+
+static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    //
+    c8->v_regs[reg_x] = c8->v_regs[reg_x] | c8->v_regs[reg_y];
+};
+
+static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    //
+    c8->v_regs[reg_x] = c8->v_regs[reg_x] & c8->v_regs[reg_y];
+};
+
+static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    //
+    c8->v_regs[reg_x] = c8->v_regs[reg_x] ^ c8->v_regs[reg_y];
+};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -281,6 +304,54 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    case C8_OP_HN_8:
+    {
+        C8_OP_HN_8_LN low_nibble = (C8_OP_HN_8_LN)(instruction & 0xF);
+
+        switch (low_nibble)
+        {
+
+        case C8_OP_HN_8_LN_0:
+            d.type = C8_I_SET;
+
+            d.params.vx = (instruction >> 8) & 0xF;
+            d.params.vy = (instruction >> 4) & 0xF;
+
+            break;
+
+        case C8_OP_HN_8_LN_1:
+            d.type = C8_I_B_OR;
+
+            d.params.vx = (instruction >> 8) & 0xF;
+            d.params.vy = (instruction >> 4) & 0xF;
+
+            break;
+
+        case C8_OP_HN_8_LN_2:
+            d.type = C8_I_B_AND;
+
+            d.params.vx = (instruction >> 8) & 0xF;
+            d.params.vy = (instruction >> 4) & 0xF;
+
+            break;
+
+        case C8_OP_HN_8_LN_3:
+            d.type = C8_I_XOR;
+
+            d.params.vx = (instruction >> 8) & 0xF;
+            d.params.vy = (instruction >> 4) & 0xF;
+
+            break;
+
+        default:
+            d.type = C8_I_GARBAGE;
+
+            break;
+        }
+
+        break;
+    }
+
     case C8_OP_HN_9:
     {
         C8_OP_HN_9_LN low_nibble = (C8_OP_HN_9_LN)(instruction & 0xF);
@@ -349,6 +420,11 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
 
     switch (data.type)
     {
+    case C8_I_GARBAGE:
+        C8_LOG("Garbage instruction\n");
+
+        break;
+
     case C8_I_CLEAR_SCREEN:
         C8_LOG("Recognized the CLEAR instruction\n");
 
@@ -433,8 +509,31 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
 
         break;
 
-    case C8_I_GARBAGE:
-        C8_LOG("Garbage instruction\n");
+    case C8_I_SET:
+        C8_LOG("Recognized the SET instruction\n");
+
+        set(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_B_OR:
+        C8_LOG("Recognized the B OR instruction\n");
+
+        b_or(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_B_AND:
+        C8_LOG("Recognized the B AND instruction\n");
+
+        b_and(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_XOR:
+        C8_LOG("Recognized the XOR instruction\n");
+
+        lxor(c8, data.params.vx, data.params.vy);
 
         break;
 
