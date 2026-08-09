@@ -55,18 +55,27 @@ static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
     uint8_t *sprite = &(c8->ram[c8->i_index]);
 
     bool off = false;
+
+    // TODO: Fix magic number
+    height = height <= 15 ? height : 15;
+
     for (int i = 0; i < height; ++i)
     {
         // TODO: Fix magic number
         for (int j = 0; j < 8; ++j)
         {
-            bool bit = (*(sprite + i) >> (7 - j)) & 1;
             // TODO: Can detect collisions here
-            c8->display[y + i][x + j] ^= bit;
-
-            if (!c8->display[y + i][x + j])
+            if (y + i < C8_HEIGHT_PIXELS && x + j < C8_WIDTH_PIXELS)
             {
-                off = true;
+                bool old = c8->display[y + i][x + j];
+
+                bool bit = (*(sprite + i) >> (7 - j)) & 1;
+                c8->display[y + i][x + j] ^= bit;
+
+                if (old == 1 && bit == 1)
+                {
+                    off = true;
+                }
             }
         }
     }
@@ -188,6 +197,8 @@ static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     uint8_t result = c8->v_regs[reg_x] + c8->v_regs[reg_y];
 
     c8->v_regs[reg_x] = result;
+
+    C8_LOG("Added value at register %02hhX value of register %02hhX \n", reg_x, reg_y);
 };
 
 static void sub_y_from_x(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -205,6 +216,8 @@ static void sub_y_from_x(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
+
+    C8_LOG("Subtracted value at register %02hhX from register %02hhX \n", reg_y, reg_x);
 };
 
 static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -222,6 +235,8 @@ static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
+
+    C8_LOG("Subtracted value at register %02hhX from register %02hhX \n", reg_x, reg_y);
 };
 
 // TODO: Make this configurable to work with reg_y for compatibility
@@ -240,6 +255,8 @@ static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
+
+    C8_LOG("Right-shifted value at register %02hhX by one bit\n", reg_x);
 };
 
 // TODO: Make this configurable to work with reg_y for compatibility
@@ -258,6 +275,41 @@ static void shift_left(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
+
+    C8_LOG("Left-shifted value at register %02hhX by one bit\n", reg_x);
+};
+
+// TODO: Make configurable for compatibility
+// https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#fx55-and-fx65-store-and-load-memory
+static void save_regs(C8 *c8, C8_VX reg_x)
+{
+
+    // TODO: Error handling (check reg_x bounds)
+
+    C8_I_INDEX start = c8->i_index;
+
+    for (int i = 0; i <= reg_x; i++)
+    {
+        c8->ram[start + i] = c8->v_regs[i];
+    }
+
+    C8_LOG("Saved registers into memory, starting at %02hX\n", start);
+};
+
+// TODO: Make configurable for compatibility
+// https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#fx55-and-fx65-store-and-load-memory
+static void load_regs(C8 *c8, C8_VX reg_x)
+{
+    // TODO: Error handling (check reg_x bounds)
+
+    C8_I_INDEX start = c8->i_index;
+
+    for (int i = 0; i <= reg_x; i++)
+    {
+        c8->v_regs[i] = c8->ram[start + i];
+    }
+
+    C8_LOG("Loaded registers V0 - %02hX from memory\n", reg_x);
 };
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
@@ -547,6 +599,39 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    case C8_OP_HN_F:
+    {
+        C8_OP_HN_F_LB low_byte = (C8_OP_HN_F_LB)(instruction & 0xFF);
+
+        switch (low_byte)
+        {
+        case C8_OP_HN_F_LB_55:
+        {
+            d.type = C8_I_SAVE_REGS;
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        case C8_OP_HN_F_LB_65:
+        {
+            d.type = C8_I_LOAD_REGS;
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        default:
+            d.type = C8_I_GARBAGE;
+
+            break;
+        }
+
+        break;
+    }
+
     default:
         d.type = C8_I_GARBAGE;
 
@@ -713,6 +798,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_SHIFT_L instruction\n");
 
         shift_left(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_LOAD_REGS:
+        C8_LOG("Recognized the C8_I_LOAD_REGS instruction\n");
+
+        load_regs(c8, data.params.vx);
+
+        break;
+
+    case C8_I_SAVE_REGS:
+        C8_LOG("Recognized the C8_I_SAVE_REGS instruction\n");
+
+        save_regs(c8, data.params.vx);
 
         break;
 
