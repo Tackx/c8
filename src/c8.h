@@ -30,7 +30,7 @@ typedef uint8_t C8_SOUND_TIMER;
 
 typedef uint8_t C8_VX;
 
-typedef uint8_t C8_VARIABLE_REGISTERS[16];
+typedef C8_VX C8_VARIABLE_REGISTERS[16];
 
 // TODO: Stack pointer?
 
