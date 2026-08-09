@@ -190,6 +190,40 @@ static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     c8->v_regs[reg_x] = result;
 };
 
+static void sub_y_from_x(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    uint8_t x_value = c8->v_regs[reg_x];
+    uint8_t y_value = c8->v_regs[reg_y];
+
+    c8->v_regs[reg_x] = x_value - y_value;
+
+    if (x_value >= y_value)
+    {
+        c8->v_regs[C8_REG_VF] = 1;
+    }
+    else
+    {
+        c8->v_regs[C8_REG_VF] = 0;
+    }
+};
+
+static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
+{
+    uint8_t x_value = c8->v_regs[reg_x];
+    uint8_t y_value = c8->v_regs[reg_y];
+
+    c8->v_regs[reg_x] = y_value - x_value;
+
+    if (y_value >= x_value)
+    {
+        c8->v_regs[C8_REG_VF] = 1;
+    }
+    else
+    {
+        c8->v_regs[C8_REG_VF] = 0;
+    }
+};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -379,6 +413,22 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         case C8_OP_HN_8_LN_4:
             d.type = C8_I_ADD;
+
+            d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
+
+            break;
+
+        case C8_OP_HN_8_LN_5:
+            d.type = C8_I_SUBTRACT_Y_X;
+
+            d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
+
+            break;
+
+        case C8_OP_HN_8_LN_7:
+            d.type = C8_I_SUBTRACT_X_Y;
 
             d.params.vx = (C8_VX)((instruction >> 8) & 0xF);
             d.params.vy = (C8_VX)((instruction >> 4) & 0xF);
@@ -583,6 +633,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the ADD instruction\n");
 
         add(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_SUBTRACT_Y_X:
+        C8_LOG("Recognized the C8_I_SUBTRACT_Y_X instruction\n");
+
+        sub_y_from_x(c8, data.params.vx, data.params.vy);
+
+        break;
+
+    case C8_I_SUBTRACT_X_Y:
+        C8_LOG("Recognized the C8_I_SUBTRACT_X_Y instruction\n");
+
+        sub_x_from_y(c8, data.params.vx, data.params.vy);
 
         break;
 

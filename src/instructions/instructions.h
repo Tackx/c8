@@ -40,6 +40,9 @@ typedef enum C8_OP_HN_8_LN
     C8_OP_HN_8_LN_2,
     C8_OP_HN_8_LN_3,
     C8_OP_HN_8_LN_4,
+    C8_OP_HN_8_LN_5,
+    C8_OP_HN_8_LN_7 = 0x07,
+
 } C8_OP_HN_8_LN;
 
 // Low nibble of high nibble 9
@@ -68,6 +71,8 @@ typedef enum C8_I
     C8_I_B_AND,
     C8_I_XOR,
     C8_I_ADD,
+    C8_I_SUBTRACT_Y_X,
+    C8_I_SUBTRACT_X_Y,
 } C8_I;
 
 typedef uint16_t C8_INSTRUCTION;
