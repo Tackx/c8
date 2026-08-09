@@ -58,13 +58,11 @@ typedef uint16_t C8_INSTRUCTION;
 
 typedef struct C8_INSTRUCTION_PARAMETERS
 {
-    C8_PROGRAM_COUNTER pc;
     C8_VX vx;
-    uint8_t vx_value;
     C8_VX vy;
-    uint8_t vy_value;
-    uint16_t i_value;
-    uint8_t draw_height;
+    uint8_t n;
+    uint8_t nn;
+    uint16_t nnn;
 
 } C8_INSTRUCTION_PARAMETERS;
 

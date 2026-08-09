@@ -191,7 +191,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
-        d.params.pc = pc;
+        d.params.nnn = pc;
 
         break;
     }
@@ -201,7 +201,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         d.type = C8_I_SUB_CALL;
         C8_PROGRAM_COUNTER pc = instruction & 0xFFF;
 
-        d.params.pc = pc;
+        d.params.nnn = pc;
 
         break;
     }
@@ -213,7 +213,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         uint8_t value = instruction & 0xFF;
 
         d.params.vx = reg;
-        d.params.vx_value = value;
+        d.params.nn = value;
 
         break;
     }
@@ -225,7 +225,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         uint8_t value = instruction & 0xFF;
 
         d.params.vx = reg;
-        d.params.vx_value = value;
+        d.params.nn = value;
 
         break;
     }
@@ -264,7 +264,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         uint8_t value = instruction & 0xFF;
 
         d.params.vx = vx;
-        d.params.vx_value = value;
+        d.params.nn = value;
 
         break;
     }
@@ -276,7 +276,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         uint8_t value = instruction & 0xFF;
 
         d.params.vx = vx;
-        d.params.vx_value = value;
+        d.params.nn = value;
 
         break;
     }
@@ -313,7 +313,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         d.type = C8_I_SET_I;
         uint16_t value = instruction & 0xFFF;
 
-        d.params.i_value = value;
+        d.params.nnn = value;
 
         break;
     }
@@ -327,7 +327,7 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         d.params.vx = x_reg;
         d.params.vy = y_reg;
-        d.params.draw_height = height;
+        d.params.n = height;
 
         break;
     }
@@ -359,42 +359,42 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
     case C8_I_JUMP:
         C8_LOG("Recognized the JUMP instruction\n");
 
-        jump(c8, data.params.pc);
+        jump(c8, (C8_PROGRAM_COUNTER)data.params.nnn);
 
         break;
 
     case C8_I_VX_SET:
         C8_LOG("Recognized the VX_SET instruction\n");
 
-        set_vx(c8, data.params.vx, data.params.vx_value);
+        set_vx(c8, data.params.vx, data.params.nn);
 
         break;
 
     case C8_I_VX_ADD:
         C8_LOG("Recognized the VX_ADD instruction\n");
 
-        add_vx(c8, data.params.vx, data.params.vx_value);
+        add_vx(c8, data.params.vx, data.params.nn);
 
         break;
 
     case C8_I_SET_I:
         C8_LOG("Recognized the SET_I instruction\n");
 
-        set_i(c8, data.params.i_value);
+        set_i(c8, data.params.nnn);
 
         break;
 
     case C8_I_DRAW:
         C8_LOG("Recognized the DRAW instruction\n");
 
-        draw(c8, data.params.vx, data.params.vy, data.params.draw_height);
+        draw(c8, data.params.vx, data.params.vy, data.params.n);
 
         break;
 
     case C8_I_SUB_CALL:
         C8_LOG("Recognized the SUB_CALL instruction\n");
 
-        sub_call(c8, data.params.pc);
+        sub_call(c8, data.params.nnn);
 
         break;
 
@@ -408,14 +408,14 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
     case C8_I_SKIP_IF_VX:
         C8_LOG("Recognized the SKIP_IF_VX instruction\n");
 
-        skip_if_vx(c8, data.params.vx, data.params.vx_value);
+        skip_if_vx(c8, data.params.vx, data.params.nn);
 
         break;
 
     case C8_I_SKIP_IF_NOT_VX:
         C8_LOG("Recognized the SKIP_IF_NOT_VX instruction\n");
 
-        skip_if_not_vx(c8, data.params.vx, data.params.vx_value);
+        skip_if_not_vx(c8, data.params.vx, data.params.nn);
 
         break;
 
