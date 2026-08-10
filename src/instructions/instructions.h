@@ -59,7 +59,8 @@ typedef enum C8_OP_HN_F_LB
 {
     C8_OP_HN_F_LB_55 = 0x55,
     C8_OP_HN_F_LB_65 = 0x65,
-    C8_OP_HN_F_LB_33 = 0x33
+    C8_OP_HN_F_LB_33 = 0x33,
+    C8_OP_HN_F_LB_29 = 0x29
 } C8_OP_HN_F_LB;
 
 typedef enum C8_I
@@ -88,7 +89,8 @@ typedef enum C8_I
     C8_I_SHIFT_L,
     C8_I_LOAD_REGS,
     C8_I_SAVE_REGS,
-    C8_I_BCDC
+    C8_I_BCDC,
+    C8_I_FONT_CHAR
 } C8_I;
 
 typedef uint16_t C8_INSTRUCTION;

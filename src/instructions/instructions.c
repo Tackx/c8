@@ -334,6 +334,17 @@ static void bcdc(C8 *c8, C8_VX reg_x)
     {
         c8->ram[c8->i_index + i] = nums[i];
     }
+
+    C8_LOG("Executed binary-coded decimal conversion from register V%hhX\n", reg_x);
+};
+
+static void font_char(C8 *c8, C8_VX reg_x)
+{
+    uint8_t c = c8->v_regs[reg_x] & 0xF;
+
+    c8->i_index = c8->ram[C8_FONT_START_LOCATION + c];
+
+    C8_LOG("Pointed index register at character in register V%hhX\n", reg_x);
 };
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
@@ -629,18 +640,10 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         switch (low_byte)
         {
-        case C8_OP_HN_F_LB_55:
+        case C8_OP_HN_F_LB_29:
         {
-            d.type = C8_I_SAVE_REGS;
-            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
-            d.params.vx = reg_x;
+            d.type = C8_I_FONT_CHAR;
 
-            break;
-        }
-
-        case C8_OP_HN_F_LB_65:
-        {
-            d.type = C8_I_LOAD_REGS;
             C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
             d.params.vx = reg_x;
 
@@ -650,6 +653,27 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         case C8_OP_HN_F_LB_33:
         {
             d.type = C8_I_BCDC;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        case C8_OP_HN_F_LB_55:
+        {
+            d.type = C8_I_SAVE_REGS;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        case C8_OP_HN_F_LB_65:
+        {
+            d.type = C8_I_LOAD_REGS;
+
             C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
             d.params.vx = reg_x;
 
@@ -852,6 +876,13 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_BCDC instruction\n");
 
         bcdc(c8, data.params.vx);
+
+        break;
+
+    case C8_I_FONT_CHAR:
+        C8_LOG("Recognized the C8_I_FONT_CHAR instruction\n");
+
+        font_char(c8, data.params.vx);
 
         break;
 
