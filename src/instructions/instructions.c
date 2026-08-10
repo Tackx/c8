@@ -117,8 +117,12 @@ static void skip_if_vx(C8 *c8, C8_VX reg, uint8_t value)
     {
         c8->pc += 2;
 
-        C8_LOG("Skip if VX condition matched\n");
+        C8_LOG("Skip if VX condition matched for register V%hhX\n", reg);
+
+        return;
     }
+
+    C8_LOG("Skip if VX condition not matched for register V%hhX\n", reg);
 };
 
 static void skip_if_not_vx(C8 *c8, C8_VX reg, uint8_t value)
@@ -128,8 +132,12 @@ static void skip_if_not_vx(C8 *c8, C8_VX reg, uint8_t value)
     {
         c8->pc += 2;
 
-        C8_LOG("Skip if not VX condition matched\n");
+        C8_LOG("Skip if not VX condition matched for register V%hhX\n", reg);
+
+        return;
     }
+
+    C8_LOG("Skip if not VX condition not matched for register V%hhX\n", reg);
 };
 
 static void skip_if_vx_vy(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -138,7 +146,7 @@ static void skip_if_vx_vy(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->pc += 2;
 
-        C8_LOG("Skip if VX == VY condition matched\n");
+        C8_LOG("Skip if VX == VY condition matched for registers X: V%hhX and Y: V%hhX\n", reg_x, reg_y);
     }
 };
 
@@ -148,7 +156,7 @@ static void skip_if_not_vx_vy(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->pc += 2;
 
-        C8_LOG("Skip if VX != VY condition matched\n");
+        C8_LOG("Skip if VX != VY condition matched for registers X: V%hhX and Y: V%hhX\n", reg_x, reg_y);
     }
 };
 
@@ -156,7 +164,7 @@ static void set(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 { //
     c8->v_regs[reg_x] = c8->v_regs[reg_y];
 
-    C8_LOG("Set register V%02hhX to value of register V%02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%hhX to value of register V%hhX\n", reg_x, reg_y);
 };
 
 static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -164,7 +172,7 @@ static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] | c8->v_regs[reg_y];
 
-    C8_LOG("Set register V%02hhX to binary OR with register V%02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%hhX to binary OR with register V%hhX\n", reg_x, reg_y);
 };
 
 static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -172,7 +180,7 @@ static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] & c8->v_regs[reg_y];
 
-    C8_LOG("Set register V%02hhX to binary AND with register V%02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%hhX to binary AND with register V%hhX\n", reg_x, reg_y);
 };
 
 static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -180,7 +188,7 @@ static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] ^ c8->v_regs[reg_y];
 
-    C8_LOG("Set register V%02hhX to logical XOR with register V%02hhX \n", reg_x, reg_y);
+    C8_LOG("Set register V%hhX to logical XOR with register V%hhX\n", reg_x, reg_y);
 };
 
 static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -198,7 +206,7 @@ static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 
     c8->v_regs[reg_x] = result;
 
-    C8_LOG("Added value at register %02hhX value of register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Added value at register V%hhX to the value of register V%hhX\n", reg_y, reg_x);
 };
 
 static void sub_y_from_x(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -217,7 +225,7 @@ static void sub_y_from_x(C8 *c8, C8_VX reg_x, C8_VX reg_y)
         c8->v_regs[C8_REG_VF] = 0;
     }
 
-    C8_LOG("Subtracted value at register %02hhX from register %02hhX \n", reg_y, reg_x);
+    C8_LOG("Subtracted value at register %hhX from register %hhX\n", reg_y, reg_x);
 };
 
 static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
@@ -236,7 +244,7 @@ static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
         c8->v_regs[C8_REG_VF] = 0;
     }
 
-    C8_LOG("Subtracted value at register %02hhX from register %02hhX \n", reg_x, reg_y);
+    C8_LOG("Subtracted value at register %hhX from register %hhX\n", reg_x, reg_y);
 };
 
 // TODO: Make this configurable to work with reg_y for compatibility
@@ -256,7 +264,7 @@ static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
         c8->v_regs[C8_REG_VF] = 0;
     }
 
-    C8_LOG("Right-shifted value at register %02hhX by one bit\n", reg_x);
+    C8_LOG("Right-shifted value at register %hhX by one bit\n", reg_x);
 };
 
 // TODO: Make this configurable to work with reg_y for compatibility
@@ -276,7 +284,7 @@ static void shift_left(C8 *c8, C8_VX reg_x, C8_VX reg_y)
         c8->v_regs[C8_REG_VF] = 0;
     }
 
-    C8_LOG("Left-shifted value at register %02hhX by one bit\n", reg_x);
+    C8_LOG("Left-shifted value at register %hhX by one bit\n", reg_x);
 };
 
 // TODO: Make configurable for compatibility
