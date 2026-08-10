@@ -27,7 +27,7 @@ static void set_vx(C8 *c8, C8_VX vx, uint8_t value)
 {
     c8->v_regs[vx] = value;
 
-    C8_LOG("Set register V%02hhX to value %d\n", vx, value);
+    C8_LOG("Set register V%hhX to value %d\n", vx, value);
 };
 
 static void add_vx(C8 *c8, C8_VX vx, uint8_t value)
@@ -318,6 +318,22 @@ static void load_regs(C8 *c8, C8_VX reg_x)
     }
 
     C8_LOG("Loaded registers V0 - %02hX from memory\n", reg_x);
+};
+
+static void bcdc(C8 *c8, C8_VX reg_x)
+{
+    uint8_t value = c8->v_regs[reg_x];
+
+    uint8_t h = value / 100;
+    uint8_t t = value % 100 / 10;
+    uint8_t o = value % 10;
+
+    uint8_t nums[3] = {h, t, o};
+
+    for (int i = 0; i < 3; i++)
+    {
+        c8->ram[c8->i_index + i] = nums[i];
+    }
 };
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
@@ -631,6 +647,15 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
             break;
         }
 
+        case C8_OP_HN_F_LB_33:
+        {
+            d.type = C8_I_BCDC;
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
         default:
             d.type = C8_I_GARBAGE;
 
@@ -820,6 +845,13 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_SAVE_REGS instruction\n");
 
         save_regs(c8, data.params.vx);
+
+        break;
+
+    case C8_I_BCDC:
+        C8_LOG("Recognized the C8_I_BCDC instruction\n");
+
+        bcdc(c8, data.params.vx);
 
         break;
 
