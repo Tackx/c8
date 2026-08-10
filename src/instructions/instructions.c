@@ -349,13 +349,15 @@ static void font_char(C8 *c8, C8_VX reg_x)
 
 static void add_i(C8 *c8, C8_VX reg_x)
 {
-    C8_I_INDEX old = c8->i_index;
-
     c8->i_index += c8->v_regs[reg_x];
 
-    if (old >= 0x0FFF && c8->i_index > 0x1000)
+    if (c8->i_index >= 0x1000)
     {
         c8->v_regs[C8_REG_VF] = 1;
+    }
+    else
+    {
+        c8->v_regs[C8_REG_VF] = 0;
     }
 };
 
