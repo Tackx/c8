@@ -55,7 +55,9 @@ static int load_data(C8 *c8, char *path)
 
 C8 init()
 {
-    C8 c8 = {.pc = C8_PROGRAM_START_LOCATION};
+    C8 c8 = {.ram = {}, .pc = C8_PROGRAM_START_LOCATION};
+
+    memcpy(&c8.ram[C8_FONT_START_LOCATION], &font_sprites, 80);
 
     return c8;
 }
