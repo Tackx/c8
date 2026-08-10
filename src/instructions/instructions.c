@@ -347,6 +347,18 @@ static void font_char(C8 *c8, C8_VX reg_x)
     C8_LOG("Pointed index register at character in register V%hhX\n", reg_x);
 };
 
+static void add_i(C8 *c8, C8_VX reg_x)
+{
+    C8_I_INDEX old = c8->i_index;
+
+    c8->i_index += c8->v_regs[reg_x];
+
+    if (old >= 0x0FFF && c8->i_index > 0x1000)
+    {
+        c8->v_regs[C8_REG_VF] = 1;
+    }
+};
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -640,6 +652,16 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         switch (low_byte)
         {
+        case C8_OP_HN_F_LB_1E:
+        {
+            d.type = C8_I_ADD_I;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
         case C8_OP_HN_F_LB_29:
         {
             d.type = C8_I_FONT_CHAR;
@@ -883,6 +905,13 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_FONT_CHAR instruction\n");
 
         font_char(c8, data.params.vx);
+
+        break;
+
+    case C8_I_ADD_I:
+        C8_LOG("Recognized the C8_I_FONT_CHAR instruction\n");
+
+        add_i(c8, data.params.vx);
 
         break;
 
