@@ -3,6 +3,7 @@
 
 #include "c8.h"
 #include "instructions.h"
+#include "keyboard/keyboard.h"
 #include "logger/logger.h"
 
 static void clear_screen(C8 *c8)
@@ -380,6 +381,38 @@ static void random_instr(C8 *c8, C8_VX reg_x, uint8_t value)
     C8_LOG("Stored random value in register V%hhX\n", reg_x);
 }
 
+static void skip_if_key_pressed(C8 *c8, C8_VX reg)
+{
+    uint8_t key = c8->v_regs[reg];
+
+    if (c8_is_key_down(key))
+    {
+        c8->pc += 2;
+
+        C8_LOG("Skip if key down condition matched for register V%hhX\n", reg);
+
+        return;
+    }
+
+    C8_LOG("Skip if key down condition not matched for register V%hhX\n", reg);
+}
+
+static void skip_if_key_not_pressed(C8 *c8, C8_VX reg)
+{
+    uint8_t key = c8->v_regs[reg];
+
+    if (!c8_is_key_down(key))
+    {
+        c8->pc += 2;
+
+        C8_LOG("Skip if key not down condition matched for register V%hhX\n", reg);
+
+        return;
+    }
+
+    C8_LOG("Skip if key not down condition not matched for register V%hhX\n", reg);
+}
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -689,6 +722,33 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         break;
     }
 
+    case C8_OP_HN_E:
+    {
+        C8_OP_HN_E_LB low_byte = (C8_OP_HN_E_LB)(instruction & 0xFF);
+
+        switch (low_byte)
+        {
+        case C8_OP_HN_E_LB_9E:
+            d.type = C8_I_SKIP_PRESSED;
+            d.params.vx = (C8_VX)(instruction >> 8 & 0xF);
+
+            break;
+
+        case C8_OP_HN_E_LB_A1:
+            d.type = C8_I_SKIP_NOT_PRESSED;
+            d.params.vx = (C8_VX)(instruction >> 8 & 0xF);
+
+            break;
+
+        default:
+            d.type = C8_I_GARBAGE;
+
+            break;
+        }
+
+        break;
+    }
+
     case C8_OP_HN_F:
     {
         C8_OP_HN_F_LB low_byte = (C8_OP_HN_F_LB)(instruction & 0xFF);
@@ -969,6 +1029,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_RAND instruction\n");
 
         random_instr(c8, data.params.vx, data.params.nn);
+
+        break;
+
+    case C8_I_SKIP_PRESSED:
+        C8_LOG("Recognized the C8_I_SKIP_PRESSED instruction\n");
+
+        skip_if_key_pressed(c8, data.params.vx);
+
+        break;
+
+    case C8_I_SKIP_NOT_PRESSED:
+        C8_LOG("Recognized the C8_I_SKIP_PRESSED instruction\n");
+
+        skip_if_key_not_pressed(c8, data.params.vx);
 
         break;
 

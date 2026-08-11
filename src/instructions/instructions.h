@@ -19,6 +19,7 @@ typedef enum C8_OP_HN
     C8_OP_HN_B = 0xB,
     C8_OP_HN_C = 0xC,
     C8_OP_HN_D = 0xD,
+    C8_OP_HN_E = 0xE,
     C8_OP_HN_F = 0xF
 } C8_OP_HN;
 
@@ -55,6 +56,13 @@ typedef enum C8_OP_HN_9_LN
 {
     C8_OP_HN_9_LN_0 = 0x0
 } C8_OP_HN_9_LN;
+
+// Low byte of high nibble F
+typedef enum C8_OP_HN_E_LB
+{
+    C8_OP_HN_E_LB_9E,
+    C8_OP_HN_E_LB_A1
+} C8_OP_HN_E_LB;
 
 // Low byte of high nibble F
 typedef enum C8_OP_HN_F_LB
@@ -96,7 +104,10 @@ typedef enum C8_I
     C8_I_FONT_CHAR,
     C8_I_ADD_I,
     C8_I_JUMP_OFFSET,
-    C8_I_RAND
+    C8_I_RAND,
+    C8_I_SKIP_PRESSED,
+    C8_I_SKIP_NOT_PRESSED,
+
 } C8_I;
 
 typedef uint16_t C8_INSTRUCTION;
