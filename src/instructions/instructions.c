@@ -50,8 +50,8 @@ static void set_i(C8 *c8, uint16_t value)
 static void draw(C8 *c8, uint8_t x_reg, uint8_t y_reg, uint8_t height)
 {
 
-    uint8_t x = c8->v_regs[x_reg];
-    uint8_t y = c8->v_regs[y_reg];
+    uint8_t x = c8->v_regs[x_reg] % C8_WIDTH_PIXELS;
+    uint8_t y = c8->v_regs[y_reg] % C8_HEIGHT_PIXELS;
 
     C8_LOG("Executing draw. X: %d; Y: %d; Height: %d\n", x, y, height);
 
@@ -274,7 +274,7 @@ static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 // https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#8xy6-and-8xye-shift
 static void shift_left(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    uint8_t val = c8->v_regs[reg_x] & 1;
+    uint8_t val = c8->v_regs[reg_x] & 0x80; // 0b10000000
 
     c8->v_regs[reg_x] = c8->v_regs[reg_x] << 1;
 
@@ -345,7 +345,7 @@ static void font_char(C8 *c8, C8_VX reg_x)
 {
     uint8_t c = c8->v_regs[reg_x] & 0xF;
 
-    c8->i_index = c8->ram[C8_FONT_START_LOCATION + c];
+    c8->i_index = C8_FONT_START_LOCATION + c * 5;
 
     C8_LOG("Pointed index register at character in register V%hhX\n", reg_x);
 };
