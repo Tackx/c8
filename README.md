@@ -4,11 +4,14 @@ My attempt at an emudev hello world project, learning C at the same time. Using 
 
 WIP
 
-![c8](docs/c8.png)
-![c8](docs/progress.png)
-![c8_test1](docs/logs.png)
-![c8_test2](docs/test2.png)
+![c8_test2](docs/brick.gif)
+![c8_test2](docs/bowling.gif)
 
+<p align="center">
+  <img src="docs/test1.png" width="32%">
+  <img src="docs/progress.png" width="32%">
+  <img src="docs/logs.png" width="25%">
+</p>
 ## Build
 
 From the root of the repo, builds in debug configuration by default:
@@ -51,6 +54,5 @@ Beep sound - [https://bigsoundbank.com/beep-of-a-cash-register-s1417.html](https
 
 - Unfuck logging
   - Write into a file stream instead of stderr
-- Add sound
 - Tests
 - Update shift instructions to be OG CHIP-8 compatible by default ig
