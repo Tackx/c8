@@ -16,6 +16,8 @@ typedef enum C8_OP_HN
     C8_OP_HN_8 = 0x8,
     C8_OP_HN_9 = 0x9,
     C8_OP_HN_A = 0xA,
+    C8_OP_HN_B = 0xB,
+    C8_OP_HN_C = 0xC,
     C8_OP_HN_D = 0xD,
     C8_OP_HN_F = 0xF
 } C8_OP_HN;
@@ -92,7 +94,9 @@ typedef enum C8_I
     C8_I_SAVE_REGS,
     C8_I_BCDC,
     C8_I_FONT_CHAR,
-    C8_I_ADD_I
+    C8_I_ADD_I,
+    C8_I_JUMP_OFFSET,
+    C8_I_RAND
 } C8_I;
 
 typedef uint16_t C8_INSTRUCTION;

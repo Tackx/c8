@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 
 #include "c8.h"
@@ -359,7 +360,25 @@ static void add_i(C8 *c8, C8_VX reg_x)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
+
+    C8_LOG("Added value stored in V%hhX to index register\n", reg_x);
 };
+
+static void jump_offset(C8 *c8, uint16_t value)
+{
+    uint8_t reg_value = c8->v_regs[C8_REG_V0];
+
+    c8->pc = (value + reg_value) & 0xFFF;
+
+    C8_LOG("Executed jump with offset\n");
+}
+
+static void random_instr(C8 *c8, C8_VX reg_x, uint8_t value)
+{
+    c8->v_regs[reg_x] = (rand() % (0xFF + 1)) & value;
+
+    C8_LOG("Stored random value in register V%hhX\n", reg_x);
+}
 
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
@@ -630,6 +649,28 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
         uint16_t value = instruction & 0xFFF;
 
         d.params.nnn = value;
+
+        break;
+    }
+
+    case C8_OP_HN_B:
+    {
+        d.type = C8_I_JUMP_OFFSET;
+        uint16_t value = instruction & 0xFFF;
+
+        d.params.nnn = value;
+
+        break;
+    }
+
+    case C8_OP_HN_C:
+    {
+        d.type = C8_I_RAND;
+        C8_VX x_reg = (C8_VX)(instruction >> 8 & 0xF);
+        uint8_t value = instruction & 0xFF;
+
+        d.params.vx = x_reg;
+        d.params.nn = value;
 
         break;
     }
@@ -914,6 +955,20 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_FONT_CHAR instruction\n");
 
         add_i(c8, data.params.vx);
+
+        break;
+
+    case C8_I_JUMP_OFFSET:
+        C8_LOG("Recognized the C8_I_JUMP_OFFSET instruction\n");
+
+        jump_offset(c8, data.params.nnn);
+
+        break;
+
+    case C8_I_RAND:
+        C8_LOG("Recognized the C8_I_RAND instruction\n");
+
+        random_instr(c8, data.params.vx, data.params.nn);
 
         break;
 
