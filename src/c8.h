@@ -51,8 +51,6 @@ typedef enum
 
 typedef uint8_t C8_VARIABLE_REGISTERS[16];
 
-// TODO: Stack pointer?
-
 typedef uint8_t C8_FONT_SPRITE[5];
 
 typedef struct C8

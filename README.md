@@ -43,6 +43,10 @@ Release:
 
 Test cartridges are located in `tests`. Most of these were taken from the [https://github.com/Timendus/chip8-test-suite/](https://github.com/Timendus/chip8-test-suite/) repository, which is very much appreciated.
 
+## Resources
+
+Beep sound - [https://bigsoundbank.com/beep-of-a-cash-register-s1417.html](https://bigsoundbank.com/beep-of-a-cash-register-s1417.html)
+
 ## TODO
 
 - Unfuck logging

@@ -81,6 +81,8 @@ int c8_run(int argc, char *argv[])
     }
 
     init_display();
+    InitAudioDevice();
+    Sound beep = LoadSound("resources/beep.wav");
 
     while (!WindowShouldClose())
     {
@@ -100,6 +102,7 @@ int c8_run(int argc, char *argv[])
 
         if (c8.sound_timer > 0)
         {
+            PlaySound(beep);
             --c8.sound_timer;
         }
 
@@ -112,6 +115,7 @@ int c8_run(int argc, char *argv[])
         // WaitTime(0.4);
     }
 
+    UnloadSound(beep);
     CloseWindow();
 
     return 0;
