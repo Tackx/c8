@@ -42,3 +42,10 @@ Release:
 ## Tests
 
 Test cartridges are located in `tests`. Most of these were taken from the [https://github.com/Timendus/chip8-test-suite/](https://github.com/Timendus/chip8-test-suite/) repository, which is very much appreciated.
+
+## TODO
+
+- Unfuck logging
+  - Write into a file stream instead of stderr
+- Add sound
+- Tests
