@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -434,6 +435,24 @@ static void set_sound(C8 *c8, C8_VX reg)
     C8_LOG("Set value of sound timer to value of register V%hhX\n", reg);
 }
 
+static void get_key(C8 *c8, C8_VX reg)
+{
+    int8_t key = c8_get_key();
+
+    if (key == -1)
+    {
+        c8->pc -= 2;
+
+        C8_LOG("Get key executed, no key pressed\n");
+    }
+    else
+    {
+        c8->v_regs[reg] = key;
+
+        C8_LOG("Get key executed, key %hhX stored in register V%hhX\n", key, reg);
+    }
+}
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -786,6 +805,16 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
             break;
         }
 
+        case C8_OP_HN_F_LB_0A:
+        {
+            d.type = C8_I_GET_KEY;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
         case C8_OP_HN_F_LB_15:
         {
             d.type = C8_I_SET_DELAY;
@@ -1115,6 +1144,13 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         C8_LOG("Recognized the C8_I_SET_TO_DELAY instruction\n");
 
         set_sound(c8, data.params.vx);
+
+        break;
+
+    case C8_I_GET_KEY:
+        C8_LOG("Recognized the C8_I_GET_KEY instruction\n");
+
+        get_key(c8, data.params.vx);
 
         break;
 
