@@ -58,7 +58,7 @@
       "windows": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}.exe",
         "miDebuggerPath": "gdb.exe",
-        "args": ["${workspaceFolder}\\tests\\4-flags.ch8"]
+        "args": ["${workspaceFolder}\\tests\\5-quirks.ch8"]
       },
       "osx": {
         "program": "${workspaceFolder}/bin/Debug/${workspaceFolderBasename}",

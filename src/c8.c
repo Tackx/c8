@@ -109,7 +109,7 @@ int c8_run(int argc, char *argv[])
 
         C8_LOG("Finished Raylib frame\n");
 
-        // WaitTime(0.1);
+        // WaitTime(0.4);
     }
 
     CloseWindow();

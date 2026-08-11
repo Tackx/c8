@@ -67,6 +67,9 @@ typedef enum C8_OP_HN_E_LB
 // Low byte of high nibble F
 typedef enum C8_OP_HN_F_LB
 {
+    C8_OP_HN_F_LB_07 = 0x07,
+    C8_OP_HN_F_LB_15 = 0x15,
+    C8_OP_HN_F_LB_18 = 0x18,
     C8_OP_HN_F_LB_55 = 0x55,
     C8_OP_HN_F_LB_65 = 0x65,
     C8_OP_HN_F_LB_33 = 0x33,
@@ -107,6 +110,9 @@ typedef enum C8_I
     C8_I_RAND,
     C8_I_SKIP_PRESSED,
     C8_I_SKIP_NOT_PRESSED,
+    C8_I_SET_TO_DELAY,
+    C8_I_SET_DELAY,
+    C8_I_SET_SOUND,
 
 } C8_I;
 

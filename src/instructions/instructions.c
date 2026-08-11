@@ -413,6 +413,27 @@ static void skip_if_key_not_pressed(C8 *c8, C8_VX reg)
     C8_LOG("Skip if key not down condition not matched for register V%hhX\n", reg);
 }
 
+static void set_reg_from_delay(C8 *c8, C8_VX reg)
+{
+    c8->v_regs[reg] = c8->delay_timer;
+
+    C8_LOG("Set value of register V%hhX to value of delay timer\n", reg);
+}
+
+static void set_delay(C8 *c8, C8_VX reg)
+{
+    c8->delay_timer = c8->v_regs[reg];
+
+    C8_LOG("Set value of delay timer to value of register V%hhX\n", reg);
+}
+
+static void set_sound(C8 *c8, C8_VX reg)
+{
+    c8->sound_timer = c8->v_regs[reg];
+
+    C8_LOG("Set value of sound timer to value of register V%hhX\n", reg);
+}
+
 C8_INSTRUCTION fetch_instruction(C8 *c8)
 {
     C8_PROGRAM_COUNTER counter_value = c8->pc;
@@ -755,6 +776,36 @@ C8_INSTRUCTION_DATA decode_instruction(C8_INSTRUCTION instruction)
 
         switch (low_byte)
         {
+        case C8_OP_HN_F_LB_07:
+        {
+            d.type = C8_I_SET_TO_DELAY;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        case C8_OP_HN_F_LB_15:
+        {
+            d.type = C8_I_SET_DELAY;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
+        case C8_OP_HN_F_LB_18:
+        {
+            d.type = C8_I_SET_SOUND;
+
+            C8_VX reg_x = (C8_VX)((instruction >> 8) & 0xF);
+            d.params.vx = reg_x;
+
+            break;
+        }
+
         case C8_OP_HN_F_LB_1E:
         {
             d.type = C8_I_ADD_I;
@@ -1040,9 +1091,30 @@ void execute_instruction(C8 *c8, C8_INSTRUCTION_DATA data)
         break;
 
     case C8_I_SKIP_NOT_PRESSED:
-        C8_LOG("Recognized the C8_I_SKIP_PRESSED instruction\n");
+        C8_LOG("Recognized the C8_I_SKIP_NOT_PRESSED instruction\n");
 
         skip_if_key_not_pressed(c8, data.params.vx);
+
+        break;
+
+    case C8_I_SET_TO_DELAY:
+        C8_LOG("Recognized the C8_I_SET_TO_DELAY instruction\n");
+
+        set_reg_from_delay(c8, data.params.vx);
+
+        break;
+
+    case C8_I_SET_DELAY:
+        C8_LOG("Recognized the C8_I_SET_TO_DELAY instruction\n");
+
+        set_delay(c8, data.params.vx);
+
+        break;
+
+    case C8_I_SET_SOUND:
+        C8_LOG("Recognized the C8_I_SET_TO_DELAY instruction\n");
+
+        set_sound(c8, data.params.vx);
 
         break;
 
