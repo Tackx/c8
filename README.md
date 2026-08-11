@@ -49,3 +49,4 @@ Test cartridges are located in `tests`. Most of these were taken from the [https
   - Write into a file stream instead of stderr
 - Add sound
 - Tests
+- Update shift instructions to be OG CHIP-8 compatible by default ig
