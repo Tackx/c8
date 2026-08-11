@@ -4,14 +4,17 @@ My attempt at an emudev hello world project, learning C at the same time. Using 
 
 WIP
 
-![c8_test2](docs/brick.gif)
-![c8_test2](docs/bowling.gif)
+<p align="center">
+  <img src="docs/brick.gif" width="49%">
+  <img src="docs/bowling.gif" width="49%">
+</p>
 
 <p align="center">
   <img src="docs/test1.png" width="32%">
   <img src="docs/progress.png" width="32%">
   <img src="docs/logs.png" width="25%">
 </p>
+
 ## Build
 
 From the root of the repo, builds in debug configuration by default:
