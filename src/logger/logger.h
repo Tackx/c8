@@ -1,15 +1,16 @@
 #pragma once
 
 #ifdef C8_DEBUG
-#include <stdio.h>
 
-// TODO: Handle NO_COLOR
+void c8_log_init(void);
+void c8_log(const char *file, const int line, const char *format, ...);
+void c8_log_close(void);
 
 #define C8_LOG(format, ...)                                                                                                                                    \
     do                                                                                                                                                         \
     {                                                                                                                                                          \
-        fprintf(stderr, "\e[0;34m[ c8@%s:%d ]:\e[0m ", __FILE__, __LINE__);                                                                                    \
-        fprintf(stderr, format __VA_OPT__(, ) __VA_ARGS__);                                                                                                    \
+                                                                                                                                                               \
+        c8_log(__FILE__, __LINE__, format __VA_OPT__(, ) __VA_ARGS__);                                                                                         \
     } while (0)
 
 #else

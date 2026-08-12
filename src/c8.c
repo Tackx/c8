@@ -53,7 +53,7 @@ static int load_data(C8 *c8, char *path)
     return 0;
 }
 
-C8 init()
+C8 c8_init()
 {
     C8 c8 = {.ram = {}, .pc = C8_PROGRAM_START_LOCATION};
 
@@ -64,7 +64,11 @@ C8 init()
 
 int c8_run(int argc, char *argv[])
 {
-    C8 c8 = init();
+#ifdef C8_DEBUG
+    c8_log_init();
+#endif
+
+    C8 c8 = c8_init();
 
     if (argc < 2)
     {
@@ -117,6 +121,10 @@ int c8_run(int argc, char *argv[])
 
     UnloadSound(beep);
     CloseWindow();
+
+#ifdef C8_DEBUG
+    c8_log_close();
+#endif
 
     return 0;
 }
