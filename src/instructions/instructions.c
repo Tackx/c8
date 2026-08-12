@@ -11,10 +11,7 @@ static void clear_screen(C8 *c8)
 {
     C8_LOG("Executing clear_screen\n");
 
-    for (int i = 0; i < C8_HEIGHT_PIXELS; i++)
-    {
-        memset(c8->display[i], 0, sizeof c8->display[0]);
-    }
+    memset(c8->display, 0, sizeof c8->display);
 
     C8_LOG("Executed clear_screen\n");
 }
