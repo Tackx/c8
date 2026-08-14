@@ -168,24 +168,24 @@ static void set(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 
 static void b_or(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] | c8->v_regs[reg_y];
+    c8->v_regs[C8_REG_VF] = 0;
 
     C8_LOG("Set register V%hhX to binary OR with register V%hhX\n", reg_x, reg_y);
 };
 
 static void b_and(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] & c8->v_regs[reg_y];
+    c8->v_regs[C8_REG_VF] = 0;
 
     C8_LOG("Set register V%hhX to binary AND with register V%hhX\n", reg_x, reg_y);
 };
 
 static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    //
     c8->v_regs[reg_x] = c8->v_regs[reg_x] ^ c8->v_regs[reg_y];
+    c8->v_regs[C8_REG_VF] = 0;
 
     C8_LOG("Set register V%hhX to logical XOR with register V%hhX\n", reg_x, reg_y);
 };
@@ -298,6 +298,7 @@ static void save_regs(C8 *c8, C8_VX reg_x)
     for (int i = 0; i <= reg_x; i++)
     {
         c8->ram[start + i] = c8->v_regs[i];
+        c8->i_index++;
     }
 
     C8_LOG("Saved registers into memory, starting at %02hX\n", start);
@@ -314,6 +315,7 @@ static void load_regs(C8 *c8, C8_VX reg_x)
     for (int i = 0; i <= reg_x; i++)
     {
         c8->v_regs[i] = c8->ram[start + i];
+        c8->i_index++;
     }
 
     C8_LOG("Loaded registers V0 - %02hX from memory\n", reg_x);
