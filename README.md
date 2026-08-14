@@ -55,7 +55,5 @@ Beep sound - [https://bigsoundbank.com/beep-of-a-cash-register-s1417.html](https
 
 ## TODO
 
-- Unfuck logging
-  - Write into a file stream instead of stderr
 - Tests
 - Update shift instructions to be OG CHIP-8 compatible by default ig

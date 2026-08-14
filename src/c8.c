@@ -1,14 +1,12 @@
 #include "raylib.h"
-#include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "c8.h"
 #include "display/display.h"
 #include "instructions/instructions.h"
+#include "loader/loader.h"
 #include "logger/logger.h"
 
 static C8_FONT_SPRITE font_sprites[16] = {
@@ -30,29 +28,6 @@ static C8_FONT_SPRITE font_sprites[16] = {
     {0xF0, 0x80, 0xF0, 0x80, 0x80}  // F
 };
 
-static int load_data(C8 *c8, char *path)
-{
-    FILE *file = fopen(path, "rb");
-
-    if (file == NULL)
-    {
-        fprintf(stderr, "Could not read file with path %s. %s\n", path, strerror(errno));
-
-        return 1;
-    }
-
-    size_t bytes_read = fread(&c8->ram[C8_PROGRAM_START_LOCATION], sizeof(unsigned char), C8_RAM_SIZE - C8_PROGRAM_START_LOCATION, file);
-    fclose(file);
-
-    if (bytes_read > 0)
-    {
-        // https://stackoverflow.com/questions/8060170/printing-hexadecimal-characters-in-c
-        C8_LOG("Read: %02hhX\n", c8->ram[C8_PROGRAM_START_LOCATION]);
-    }
-
-    return 0;
-}
-
 C8 c8_init()
 {
     C8 c8 = {.ram = {}, .pc = C8_PROGRAM_START_LOCATION};
@@ -72,16 +47,21 @@ int c8_run(int argc, char *argv[])
 
     if (argc < 2)
     {
-        fprintf(stderr, "No input file specified");
+        int err = load_data_input(&c8);
 
-        return 1;
+        if (err != 0)
+        {
+            return 1;
+        }
     }
-
-    int err = load_data(&c8, argv[1]);
-
-    if (err != 0)
+    else
     {
-        return 1;
+        int err = load_data_path(&c8, argv[1]);
+
+        if (err != 0)
+        {
+            return 1;
+        }
     }
 
     init_display();
