@@ -250,9 +250,9 @@ static void sub_x_from_y(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 // https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#8xy6-and-8xye-shift
 static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    uint8_t val = c8->v_regs[reg_x] & 1;
+    uint8_t val = c8->v_regs[reg_y] & 1;
 
-    c8->v_regs[reg_x] = c8->v_regs[reg_x] >> 1;
+    c8->v_regs[reg_x] = c8->v_regs[reg_y] >> 1;
 
     if (val)
     {
@@ -270,9 +270,9 @@ static void shift_right(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 // https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#8xy6-and-8xye-shift
 static void shift_left(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
-    uint8_t val = c8->v_regs[reg_x] & 0x80; // 0b10000000
+    uint8_t val = c8->v_regs[reg_y] & 0x80; // 0b10000000
 
-    c8->v_regs[reg_x] = c8->v_regs[reg_x] << 1;
+    c8->v_regs[reg_x] = c8->v_regs[reg_y] << 1;
 
     if (val)
     {
