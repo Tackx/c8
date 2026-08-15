@@ -89,7 +89,6 @@ int c8_run(int argc, char *argv[])
             {
                 break;
             }
-            // WaitTime(0.5);
         }
 
         if (c8.delay_timer > 0)
@@ -108,8 +107,6 @@ int c8_run(int argc, char *argv[])
         EndDrawing();
 
         C8_LOG("Finished Raylib frame\n");
-
-        // WaitTime(0.4);
     }
 
     UnloadSound(beep);
