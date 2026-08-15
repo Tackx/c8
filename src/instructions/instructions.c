@@ -192,6 +192,11 @@ static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 
 static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
+
+    uint8_t result = c8->v_regs[reg_x] + c8->v_regs[reg_y];
+
+    c8->v_regs[reg_x] = result;
+
     if ((c8->v_regs[reg_x] + c8->v_regs[reg_y]) > 255)
     {
         c8->v_regs[C8_REG_VF] = 1;
@@ -200,10 +205,6 @@ static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
     {
         c8->v_regs[C8_REG_VF] = 0;
     }
-
-    uint8_t result = c8->v_regs[reg_x] + c8->v_regs[reg_y];
-
-    c8->v_regs[reg_x] = result;
 
     C8_LOG("Added value at register V%hhX to the value of register V%hhX\n", reg_y, reg_x);
 };
