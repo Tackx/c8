@@ -12,19 +12,35 @@ bool c8_is_key_down(unsigned short key) { return IsKeyDown(raylib_keys[key]); }
 
 int8_t c8_get_key()
 {
-    int key = GetKeyPressed();
+    static const int C8_KEY_NONE = 0;
+    static int key;
 
-    int8_t key_index = -1;
-
-    for (int i = 0; i < 16; i++)
+    if (key == C8_KEY_NONE)
     {
-        if (key == raylib_keys[i])
-        {
-            key_index = i;
+        key = GetKeyPressed();
 
-            break;
-        }
+        return -1;
     }
 
-    return key_index;
+    if (!IsKeyDown(key))
+    {
+
+        int8_t key_index = -1;
+
+        for (int i = 0; i < 16; i++)
+        {
+            if (key == raylib_keys[i])
+            {
+                key_index = i;
+
+                break;
+            }
+        }
+
+        key = 0;
+
+        return key_index;
+    }
+
+    return -1;
 }
