@@ -193,11 +193,11 @@ static void lxor(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 static void add(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 {
 
-    uint8_t result = c8->v_regs[reg_x] + c8->v_regs[reg_y];
+    uint16_t result = c8->v_regs[reg_x] + c8->v_regs[reg_y];
 
-    c8->v_regs[reg_x] = result;
+    c8->v_regs[reg_x] = (uint8_t)result;
 
-    if ((c8->v_regs[reg_x] + c8->v_regs[reg_y]) > 255)
+    if (result > 255)
     {
         c8->v_regs[C8_REG_VF] = 1;
     }
