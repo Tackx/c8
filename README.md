@@ -12,6 +12,7 @@ WIP
 <p align="center">
   <img src="docs/test1.png" width="32%">
   <img src="docs/progress.png" width="32%">
+  <img src="docs/quirks.png" width="32%">
   <img src="docs/logs.png" width="25%">
 </p>
 
@@ -55,5 +56,5 @@ Beep sound - [https://bigsoundbank.com/beep-of-a-cash-register-s1417.html](https
 
 ## TODO
 
-- Tests
-- Update shift instructions to be OG CHIP-8 compatible by default ig
+- Keybinds
+- Custom assembler?
