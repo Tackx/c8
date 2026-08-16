@@ -8,5 +8,6 @@
     "**/*.o": true,
     "**/*.exe": true
   },
-  "C_Cpp.intelliSenseEngine": "disabled"
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "editor.quickSuggestions": { "other": true }
 }

@@ -170,6 +170,7 @@ if (downloadRaylib) then
 
     project (workspaceName)
         kind "ConsoleApp"
+        language "C"
         location "build_files/"
         targetdir "../bin/%{cfg.buildcfg}"
 
@@ -209,8 +210,7 @@ if (downloadRaylib) then
 
         links {"raylib"}
 
-        cdialect "C17"
-        cppdialect "C++17"
+        cdialect "C23"
 
         includedirs {raylib_dir .. "/src" }
 
