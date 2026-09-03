@@ -72,22 +72,26 @@ int c8_run(int argc, char *argv[])
     {
         // Raylib runs at target 60 fps, so each run of the main loop
         // we should process around 12 instructions to achieve ~700 instructions per second.
-        uint8_t draw_quirk = 0;
+        bool drew = false;
         for (int i = 0; i < 12; i++)
         {
             C8_INSTRUCTION f = fetch_instruction(&c8);
             C8_INSTRUCTION_DATA d = decode_instruction(f);
 
-            if (d.type == C8_I_DRAW)
+            if (d.type == C8_I_DRAW && drew)
             {
-                draw_quirk++;
+                // Fetch increments the PC, if we skip on the second draw in the loop,
+                // we must decrement it back so this instruction is executed again in the next loop run
+                c8.pc -= 2;
+
+                break;
             }
 
             execute_instruction(&c8, d);
 
-            if (draw_quirk >= 1)
+            if (d.type == C8_I_DRAW)
             {
-                break;
+                drew = true;
             }
         }
 
