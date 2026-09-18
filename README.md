@@ -2,6 +2,8 @@
 
 My attempt at an emudev hello world project, learning C at the same time. Using Raylib.
 
+The project includes a custom [CHIP-8 assembler](https://github.com/tackx/c8-ass) as well.
+
 WIP
 
 <p align="center">
