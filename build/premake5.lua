@@ -174,13 +174,13 @@ if (downloadRaylib) then
         location "build_files/"
         targetdir "../bin/%{cfg.buildcfg}"
 
-        filter {"system:windows", "configurations:Release", "action:gmake*"}
-            kind "WindowedApp"
-            buildoptions { "-Wl,--subsystem,windows" }
+        -- filter {"system:windows", "configurations:Release", "action:gmake*"}
+        --     kind "WindowedApp"
+        --     buildoptions { "-Wl,--subsystem,windows" }
 
-        filter {"system:windows", "configurations:Release", "action:vs*"}
-            kind "WindowedApp"
-            entrypoint "mainCRTStartup"
+        -- filter {"system:windows", "configurations:Release", "action:vs*"}
+        --     kind "WindowedApp"
+        --     entrypoint "mainCRTStartup"
 
         filter "action:vs*"
             debugdir "$(SolutionDir)"
