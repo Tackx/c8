@@ -66,7 +66,7 @@ int c8_run(int argc, char *argv[])
 
     init_display();
     InitAudioDevice();
-    Sound beep = LoadSound("resources/beep.wav");
+    Sound beep = LoadSound(TextFormat("%sresources/beep.wav", GetApplicationDirectory()));
 
     while (!WindowShouldClose())
     {

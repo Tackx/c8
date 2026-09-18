@@ -61,7 +61,7 @@ int load_data_input(C8 *c8)
     while (readTotal < C8_RAM_SIZE - C8_PROGRAM_START_LOCATION)
     {
 
-        int read = fread(&c8->ram[C8_PROGRAM_START_LOCATION] + readTotal, 1, C8_RAM_SIZE - C8_PROGRAM_START_LOCATION - readTotal, stdin);
+        size_t read = fread(&c8->ram[C8_PROGRAM_START_LOCATION] + readTotal, 1, C8_RAM_SIZE - C8_PROGRAM_START_LOCATION - readTotal, stdin);
 
         C8_LOG("Read chars: %d\n", read);
 

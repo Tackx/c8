@@ -8,7 +8,7 @@ void init_display(void)
     InitWindow(C8_ACTUAL_WIDTH, C8_ACTUAL_HEIGHT, "C8");
     SetTargetFPS(60);
 
-    Image icon = LoadImage("resources/wabbit_alpha.png");
+    Image icon = LoadImage(TextFormat("%sresources/wabbit_alpha.png", GetApplicationDirectory()));
     SetWindowIcon(icon);
     UnloadImage(icon);
 }

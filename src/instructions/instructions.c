@@ -160,7 +160,7 @@ static void skip_if_not_vx_vy(C8 *c8, C8_VX reg_x, C8_VX reg_y)
 };
 
 static void set(C8 *c8, C8_VX reg_x, C8_VX reg_y)
-{ //
+{
     c8->v_regs[reg_x] = c8->v_regs[reg_y];
 
     C8_LOG("Set register V%hhX to value of register V%hhX\n", reg_x, reg_y);
