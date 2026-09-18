@@ -59,4 +59,3 @@ Beep sound - [https://bigsoundbank.com/beep-of-a-cash-register-s1417.html](https
 ## TODO
 
 - Keybinds
-- Custom assembler?
