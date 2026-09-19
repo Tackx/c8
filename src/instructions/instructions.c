@@ -353,14 +353,14 @@ static void add_i(C8 *c8, C8_VX reg_x)
 {
     c8->i_index += c8->v_regs[reg_x];
 
-    if (c8->i_index >= 0x1000)
-    {
-        c8->v_regs[C8_REG_VF] = 1;
-    }
-    else
-    {
-        c8->v_regs[C8_REG_VF] = 0;
-    }
+    // if (c8->i_index >= 0x1000)
+    // {
+    //     c8->v_regs[C8_REG_VF] = 1;
+    // }
+    // else
+    // {
+    //     c8->v_regs[C8_REG_VF] = 0;
+    // }
 
     C8_LOG("Added value stored in V%hhX to index register\n", reg_x);
 };
